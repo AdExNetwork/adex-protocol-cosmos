@@ -14,6 +14,7 @@ import (
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	ibccmd "github.com/cosmos/cosmos-sdk/x/ibc/client/cli"
 	stakecmd "github.com/cosmos/cosmos-sdk/x/stake/client/cli"
+	adexcmd "github.com/cosmos/cosmos-sdk/adex/x/adex/client/cli"
 	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/libs/cli"
 )
@@ -62,6 +63,11 @@ func main() {
 			stakecmd.GetCmdEditValidator(cdc),
 			stakecmd.GetCmdDelegate(cdc),
 			stakecmd.GetCmdUnbond("stake", cdc),
+		)...)
+
+	rootCmd.AddCommand(
+		client.PostCommands(
+			adexcmd.PostCmdClaimToken(cdc),
 		)...)
 
 	// add proxy, version and key info
