@@ -14,6 +14,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 	adex "github.com/cosmos/cosmos-sdk/adex/x/adex"
+	types "github.com/cosmos/cosmos-sdk/adex/x/adex/types"
 )
 
 const (
@@ -91,6 +92,7 @@ func MakeCodec() *codec.Codec {
 	ibc.RegisterCodec(cdc)
 	auth.RegisterCodec(cdc)
 
+	cdc.RegisterConcrete(&types.ClaimTokenMsg{}, "adex/ClaimTokenMsg", nil)
 	// @TODO: register custom types here using cdc.RegisterConcrete(&theType{}, "adex/theType", nil)
 
 	cdc.Seal()
