@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/wire"
@@ -15,7 +14,6 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 	adex "github.com/cosmos/cosmos-sdk/adex/x/adex"
-	types "github.com/cosmos/cosmos-sdk/adex/types"
 )
 
 const (
@@ -64,9 +62,7 @@ func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*ba
 	app.accountMapper = auth.NewAccountMapper(
 		cdc,
 		app.keyAccount, // target store
-		func() auth.Account {
-			return &types.AppAccount{}
-		},
+		auth.ProtoBaseAccount,
 	)
 	app.coinKeeper = bank.NewKeeper(app.accountMapper)
 	app.ibcMapper = ibc.NewMapper(app.cdc, app.keyIBC, app.RegisterCodespace(ibc.DefaultCodespace))
@@ -78,7 +74,8 @@ func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*ba
 		AddRoute("adex", adex.NewHandler(app.coinKeeper))
 
 	// perform initialization logic
-	app.SetInitChainer(app.initChainer)
+	// if we need our own InitChainer, the one at cosmos-sdk/examples/basecoin is a great example
+	//app.SetInitChainer(app.initChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
 	app.SetAnteHandler(auth.NewAnteHandler(app.accountMapper, app.feeCollectionKeeper))
@@ -106,8 +103,7 @@ func MakeCodec() *wire.Codec {
 	ibc.RegisterWire(cdc)
 	auth.RegisterWire(cdc)
 
-	// register custom type
-	cdc.RegisterConcrete(&types.AppAccount{}, "adex/Account", nil)
+	// @TODO: register custom types here using cdc.RegisterConcrete(&theType{}, "adex/theType", nil)
 
 	cdc.Seal()
 
@@ -126,59 +122,6 @@ func (app *AdExProtocolApp) EndBlocker(_ sdk.Context, _ abci.RequestEndBlock) ab
 	return abci.ResponseEndBlock{}
 }
 
-// initChainer implements the custom application logic that the BaseApp will
-// invoke upon initialization. In this case, it will take the application's
-// state provided by 'req' and attempt to deserialize said state. The state
-// should contain all the genesis accounts. These accounts will be added to the
-// application's account mapper.
-func (app *AdExProtocolApp) initChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
-	stateJSON := req.AppStateBytes
-
-	genesisState := new(types.GenesisState)
-	err := app.cdc.UnmarshalJSON(stateJSON, genesisState)
-	if err != nil {
-		// TODO: https://github.com/cosmos/cosmos-sdk/issues/468
-		panic(err)
-	}
-
-	for _, gacc := range genesisState.Accounts {
-		acc, err := gacc.ToAppAccount()
-		if err != nil {
-			// TODO: https://github.com/cosmos/cosmos-sdk/issues/468
-			panic(err)
-		}
-
-		acc.AccountNumber = app.accountMapper.GetNextAccountNumber(ctx)
-		app.accountMapper.SetAccount(ctx, acc)
-	}
-
-	return abci.ResponseInitChain{}
-}
-
-// ExportAppStateAndValidators implements custom application logic that exposes
-// various parts of the application's state and set of validators. An error is
-// returned if any step getting the state or set of validators fails.
 func (app *AdExProtocolApp) ExportAppStateAndValidators() (appState json.RawMessage, validators []tmtypes.GenesisValidator, err error) {
-	ctx := app.NewContext(true, abci.Header{})
-	accounts := []*types.GenesisAccount{}
-
-	appendAccountsFn := func(acc auth.Account) bool {
-		account := &types.GenesisAccount{
-			Address: acc.GetAddress(),
-			Coins:   acc.GetCoins(),
-		}
-
-		accounts = append(accounts, account)
-		return false
-	}
-
-	app.accountMapper.IterateAccounts(ctx, appendAccountsFn)
-
-	genState := types.GenesisState{Accounts: accounts}
-	appState, err = wire.MarshalJSONIndent(app.cdc, genState)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return appState, validators, err
+	return json.RawMessage{}, validators, nil
 }
