@@ -13,6 +13,10 @@ type ClaimTokenMsg struct {
 }
 
 // Implement msg
+func (msg ClaimTokenMsg) Name() string {
+	return "ClaimTokenMsg"
+}
+
 func (msg ClaimTokenMsg) Type() string {
 	return "adex"
 }

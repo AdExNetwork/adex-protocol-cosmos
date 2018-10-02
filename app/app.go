@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/wire"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/ibc"
@@ -22,7 +22,7 @@ const (
 
 type AdExProtocolApp struct {
 	*bam.BaseApp
-	cdc *wire.Codec
+	cdc *codec.Codec
 
 	// keys to access the multistore
 	keyMain    *sdk.KVStoreKey
@@ -55,7 +55,7 @@ func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*ba
 		app.keyAccount, // target store
 		auth.ProtoBaseAccount,
 	)
-	app.coinKeeper = bank.NewKeeper(app.accountMapper)
+	app.coinKeeper = bank.NewBaseKeeper(app.accountMapper)
 	app.ibcMapper = ibc.NewMapper(app.cdc, app.keyIBC, app.RegisterCodespace(ibc.DefaultCodespace))
 
 	// register message routes: all messages starting with adex/ will be routed to the adex handler
@@ -82,14 +82,14 @@ func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*ba
 	return app
 }
 
-func MakeCodec() *wire.Codec {
-	cdc := wire.NewCodec()
+func MakeCodec() *codec.Codec {
+	cdc := codec.New()
 
-	wire.RegisterCrypto(cdc)
-	sdk.RegisterWire(cdc)
-	bank.RegisterWire(cdc)
-	ibc.RegisterWire(cdc)
-	auth.RegisterWire(cdc)
+	codec.RegisterCrypto(cdc)
+	sdk.RegisterCodec(cdc)
+	bank.RegisterCodec(cdc)
+	ibc.RegisterCodec(cdc)
+	auth.RegisterCodec(cdc)
 
 	// @TODO: register custom types here using cdc.RegisterConcrete(&theType{}, "adex/theType", nil)
 

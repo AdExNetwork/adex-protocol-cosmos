@@ -2,7 +2,7 @@
 
 This is the Cosmos SDK implementation of the [AdEx Protocol](https://github.com/AdExNetwork/adex-protocol).
 
-This is built with github.com/cosmos/cosmos-sdk, commit 416181be60f32750178c24be52c9ebf15ce9a25b
+This is built with github.com/cosmos/cosmos-sdk, commit 6cbac799125414d225530241cc8ee44be36a76f7
 
 ## How to build:
 
@@ -12,7 +12,7 @@ This is built with github.com/cosmos/cosmos-sdk, commit 416181be60f32750178c24be
 mkdir -p $GOPATH/src/github.com/cosmos
 cd $GOPATH/src/github.com/cosmos
 git clone https://github.com/cosmos/cosmos-sdk
-cd cosmos-sdk && git checkout 416181be60f32750178c24be52c9ebf15ce9a25b
+cd cosmos-sdk && git checkout 6cbac799125414d225530241cc8ee44be36a76f7
 make get_tools && make get_vendor_deps && make install
 ```
 
