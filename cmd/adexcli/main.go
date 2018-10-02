@@ -80,7 +80,7 @@ func main() {
 	)
 
 	// prepare and add flags
-	executor := cli.PrepareMainCmd(rootCmd, "TM", os.ExpandEnv("$HOME/.adexd"))
+	executor := cli.PrepareMainCmd(rootCmd, "TM", os.ExpandEnv("$HOME/.adexcli"))
 	err := executor.Execute()
 	if err != nil {
 		// Note: Handle with #870
