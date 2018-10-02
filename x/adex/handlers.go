@@ -18,7 +18,11 @@ func NewHandler(k bank.Keeper) sdk.Handler {
 	}
 }
 
-func handleClaimToken(k bank.Keeper, ctx sdk.Context, msg sdk.Msg) sdk.Result {
-	//k.AddCoins(ctx, submitter, coins)
+func handleClaimToken(k bank.Keeper, ctx sdk.Context, msg types.ClaimTokenMsg) sdk.Result {
+	// @TODO: validate ethereum sigs, etc.
+	_, _, err := k.AddCoins(ctx, msg.Submitter, sdk.Coins{{"adex", sdk.NewInt(msg.Amount)}})
+	if err != nil {
+		return err.Result()
+	}
 	return sdk.Result{}
 }

@@ -8,6 +8,7 @@ import (
 
 type ClaimTokenMsg struct {
 	Amount	int64	`json:"amount"`
+	Submitter sdk.AccAddress `json:"submitter"`
 	// @TODO ethSig, ethAddr; the ethSig must be signing the cosmos addr of the requester
 }
 
@@ -32,7 +33,7 @@ func (msg ClaimTokenMsg) GetSignBytes() []byte {
 
 // GetSigners Implements Msg
 func (msg ClaimTokenMsg) GetSigners() []sdk.AccAddress {
-	return nil
+	return []sdk.AccAddress{msg.Submitter}
 }
 
 // ValidateBasic Implements Msg
