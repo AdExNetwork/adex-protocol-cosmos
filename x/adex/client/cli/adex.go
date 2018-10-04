@@ -34,11 +34,13 @@ func PostCmdCommitmentStart(cdc *codec.Codec) *cobra.Command {
 
 			//amount := viper.GetInt64(FlagAmount)
 			// @TODO
+			// @TODO: instead of empty slices, nil should be used
+			// othrewise after encoding and decoding through amino, it still ends up as a nil slice
 			msg := types.CommitmentStartMsg{
 				Bid: types.Bid{},
-				BidSig: []byte{},
+				BidSig: nil,
 				Publisher: publisher,
-				ExtraValidators: []types.Validator{},
+				ExtraValidators: nil,
 			}
 
 			cliCtx.PrintResponse = true

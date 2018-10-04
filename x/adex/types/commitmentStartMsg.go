@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"log"
 )
 
 const (
@@ -29,13 +28,10 @@ func (msg CommitmentStartMsg) Type() string {
 }
 
 func (msg CommitmentStartMsg) GetSignBytes() []byte {
-	// @TODO: try amino for this shit
 	b, err := json.Marshal(msg)
 	if err != nil {
 		panic(err)
 	}
-	// @TODO: remove this; currently for debugging
-	log.Println(string(b))
 	return b
 }
 
