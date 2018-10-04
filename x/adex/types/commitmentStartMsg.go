@@ -28,10 +28,6 @@ func (msg CommitmentStartMsg) Type() string {
 	return "adex"
 }
 
-func (msg CommitmentStartMsg) Get(key interface{}) (value interface{}) {
-	return nil
-}
-
 func (msg CommitmentStartMsg) GetSignBytes() []byte {
 	// @TODO: try amino for this shit
 	b, err := json.Marshal(msg)

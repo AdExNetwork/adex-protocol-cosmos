@@ -13,7 +13,6 @@ type CommitmentFinalizeMsg struct {
 	Submitter sdk.AccAddress `json:"submitter"`
 }
 
-// Implement msg
 func (msg CommitmentFinalizeMsg) Name() string {
 	return "CommitmentFinalizeMsg"
 }
@@ -22,12 +21,6 @@ func (msg CommitmentFinalizeMsg) Type() string {
 	return "adex"
 }
 
-// Get Implements Msg
-func (msg CommitmentFinalizeMsg) Get(key interface{}) (value interface{}) {
-	return nil
-}
-
-// GetSignBytes Implements Msg
 func (msg CommitmentFinalizeMsg) GetSignBytes() []byte {
 	b, err := json.Marshal(msg)
 	if err != nil {
