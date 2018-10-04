@@ -7,6 +7,10 @@ import (
 	"log"
 )
 
+const (
+	costCommitmentStart = 3000
+)
+
 func NewHandler(k bank.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
@@ -24,10 +28,14 @@ func handleCommitmentStart(k bank.Keeper, ctx sdk.Context, msg types.CommitmentS
 	// @TODO: remove this
 	log.Println(msg)
 
+	// @TODO: more granular
+	ctx.GasMeter().ConsumeGas(costCommitmentStart, "commitmentStart")
+
 	_, _, err := k.AddCoins(ctx, msg.Publisher, sdk.Coins{{"adex", sdk.NewInt(20)}})
 	if err != nil {
 		return err.Result()
 	}
+
 	return sdk.Result{}
 }
 
