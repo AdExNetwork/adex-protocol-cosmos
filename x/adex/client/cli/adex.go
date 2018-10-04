@@ -18,7 +18,7 @@ const (
 	FlagAmount     = "amount"
 )
 
-func PostCmdClaimToken(cdc *codec.Codec) *cobra.Command {
+func PostCmdCommitmentStart(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "commitment",
 		Short: "Start a commitment for a bid",
@@ -36,8 +36,7 @@ func PostCmdClaimToken(cdc *codec.Codec) *cobra.Command {
 			// @TODO
 			msg := types.CommitmentStartMsg{
 				Bid: types.Bid{},
-				Advertiser: publisher,
-				AdvertiserSig: []byte{},
+				BidSig: []byte{},
 				Publisher: publisher,
 				ExtraValidators: []types.Validator{},
 			}
@@ -53,4 +52,6 @@ func PostCmdClaimToken(cdc *codec.Codec) *cobra.Command {
 
 	return cmd
 }
+
+// @TODO: PostCmdCommitmentFinalize
 

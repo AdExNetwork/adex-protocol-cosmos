@@ -67,7 +67,7 @@ func main() {
 
 	rootCmd.AddCommand(
 		client.PostCommands(
-			adexcmd.PostCmdClaimToken(cdc),
+			adexcmd.PostCmdCommitmentStart(cdc),
 		)...)
 
 	// add proxy, version and key info

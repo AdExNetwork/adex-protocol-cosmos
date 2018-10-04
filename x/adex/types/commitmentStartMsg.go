@@ -14,8 +14,7 @@ const (
 type CommitmentStartMsg struct {
 	// the Bid is created and signed by the Advertiser
 	Bid Bid `json:"bid"`
-	Advertiser sdk.AccAddress `json:"advertiser"`
-	AdvertiserSig []byte `json:"advertiserSig"`
+	BidSig []byte `json:"bidSig"`
 	// and accepted (turned into a Commitment) by the publisher
 	Publisher sdk.AccAddress `json:"publisher"`
 	ExtraValidators []Validator `json:"extraValidators"`
@@ -34,6 +33,7 @@ func (msg CommitmentStartMsg) Get(key interface{}) (value interface{}) {
 }
 
 func (msg CommitmentStartMsg) GetSignBytes() []byte {
+	// @TODO: try amino for this shit
 	b, err := json.Marshal(msg)
 	if err != nil {
 		panic(err)
