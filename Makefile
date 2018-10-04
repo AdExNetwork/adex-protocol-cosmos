@@ -7,12 +7,13 @@ BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 LDFLAGS = -ldflags "-X main.Version=${VERSION} -X main.Commit=${COMMIT} -X main.Branch=${BRANCH}"
 
 cli:
-	go build ${LDFLAGS} -o ./adexcli cmd/adexcli/main.go
+	go build ${LDFLAGS} -o ./build/adexcli cmd/adexcli/main.go
 
 daemon:
-	go build ${LDFLAGS} -o ./adexd cmd/adexd/main.go
+	go build ${LDFLAGS} -o ./build/adexd cmd/adexd/main.go
 
 build: cli daemon
+
 #test:
 #	go test -v $(PACKAGES)
 
