@@ -91,8 +91,8 @@ func MakeCodec() *codec.Codec {
 	ibc.RegisterCodec(cdc)
 	auth.RegisterCodec(cdc)
 
-	cdc.RegisterConcrete(types.ClaimTokenMsg{}, "adex/ClaimTokenMsg", nil)
-	// @TODO: register custom types here using cdc.RegisterConcrete(&theType{}, "adex/theType", nil)
+	cdc.RegisterConcrete(types.CommitmentStartMsg{}, "adex/CommitmentStartMsg", nil)
+	cdc.RegisterConcrete(types.CommitmentFinalizeMsg{}, "adex/CommitmentFinalizeMsg", nil)
 
 	cdc.Seal()
 
