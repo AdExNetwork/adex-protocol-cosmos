@@ -66,7 +66,6 @@ func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*ba
 		AddRoute("adex", adex.NewHandler(app.coinKeeper))
 
 	// perform initialization logic
-	// if we need our own InitChainer, the one at cosmos-sdk/examples/basecoin is a great example
 	app.SetInitChainer(app.InitChainer)
 	app.SetEndBlocker(app.EndBlocker)
 	app.SetAnteHandler(auth.NewAnteHandler(app.accountMapper, app.feeCollectionKeeper))
@@ -92,7 +91,7 @@ func MakeCodec() *codec.Codec {
 	ibc.RegisterCodec(cdc)
 	auth.RegisterCodec(cdc)
 
-	cdc.RegisterConcrete(&types.ClaimTokenMsg{}, "adex/ClaimTokenMsg", nil)
+	cdc.RegisterConcrete(types.ClaimTokenMsg{}, "adex/ClaimTokenMsg", nil)
 	// @TODO: register custom types here using cdc.RegisterConcrete(&theType{}, "adex/theType", nil)
 
 	cdc.Seal()
@@ -105,11 +104,49 @@ func (app *AdExProtocolApp) EndBlocker(_ sdk.Context, _ abci.RequestEndBlock) ab
 }
 
 func (app *AdExProtocolApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
-	// @TODO
+	stateJSON := req.AppStateBytes
+
+	genesisState := new(types.GenesisState)
+	err := app.cdc.UnmarshalJSON(stateJSON, genesisState)
+	if err != nil {
+		// TODO: https://github.com/cosmos/cosmos-sdk/issues/468
+		panic(err)
+	}
+
+	for _, gacc := range genesisState.Accounts {
+		acc, err := gacc.ToAppAccount()
+		if err != nil {
+			// TODO: https://github.com/cosmos/cosmos-sdk/issues/468
+			panic(err)
+		}
+
+		acc.AccountNumber = app.accountMapper.GetNextAccountNumber(ctx)
+		app.accountMapper.SetAccount(ctx, acc)
+	}
+
+
 	return abci.ResponseInitChain{}
 }
 
 func (app *AdExProtocolApp) ExportAppStateAndValidators() (appState json.RawMessage, validators []tmtypes.GenesisValidator, err error) {
-	// @TODO
+	ctx := app.NewContext(true, abci.Header{})
+	accounts := []*types.GenesisAccount{}
+
+	app.accountMapper.IterateAccounts(ctx, func(acc auth.Account) bool {
+		account := &types.GenesisAccount{
+			Address: acc.GetAddress(),
+			Coins:   acc.GetCoins(),
+		}
+
+		accounts = append(accounts, account)
+		return false
+	})
+
+	genState := types.GenesisState{Accounts: accounts}
+	appState, err = codec.MarshalJSONIndent(app.cdc, genState)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	return json.RawMessage{}, validators, nil
 }
