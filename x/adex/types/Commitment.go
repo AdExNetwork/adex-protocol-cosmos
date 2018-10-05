@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	MIN_VALIDATOR_COUNT = 2
+	minValidatorCount = 2
 )
 
 type Commitment struct {
@@ -18,7 +18,27 @@ type Commitment struct {
 }
 
 func (commitment Commitment) IsValid() bool {
-	if len(commitment.Validators) < MIN_VALIDATOR_COUNT {
+	if commitment.Validators == nil {
+		return false
+	}
+	if len(commitment.Validators) < minValidatorCount {
+		return false
+	}
+
+	if commitment.ValidUntil == 0 {
+		return false
+	}
+
+	if commitment.TotalReward == nil {
+		return false
+	}
+	// @TODO: should we have those checks for the addresses?
+
+	validatorRewards := sdk.Coins{}
+	for _, validator := range commitment.Validators {
+		validatorRewards = validatorRewards.Plus(validator.Reward)
+	}
+	if commitment.TotalReward.IsLT(validatorRewards) {
 		return false
 	}
 

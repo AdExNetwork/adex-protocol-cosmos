@@ -9,6 +9,7 @@ import (
 
 const (
 	costCommitmentStart = 3000
+	costCommitmentFinalize = 5000
 )
 
 func NewHandler(k bank.Keeper) sdk.Handler {
@@ -36,7 +37,7 @@ func handleCommitmentStart(k bank.Keeper, ctx sdk.Context, msg types.CommitmentS
 	// for validator := msg.Bid.Validators
 
 	// @TODO: since we presume the bid is valid (cause Validatebasic on the msg). we construct a commitment and check if that is valid
-	// then, we chec kif the advertiser has all the balances for bid.Reward
+	// then, we check if the advertiser has all the balances for bid.Reward
 	// after we construct the commitment, check if the commitment.GetTotalReward() is less than Bid.Reward .IsGTE, .IsLT
 	// if they do, we proceed to deduct them and mark the commitment as existant
 	// then on finalize/timeout, assuming the commitment exists, we distribute the balances back; we should credit the validator rewards for validators
@@ -52,6 +53,7 @@ func handleCommitmentStart(k bank.Keeper, ctx sdk.Context, msg types.CommitmentS
 func handleCommitmentFinalize(k bank.Keeper, ctx sdk.Context, msg types.CommitmentFinalizeMsg) sdk.Result {
 	// @TODO: remove this
 	log.Println(msg)
+	ctx.GasMeter().ConsumeGas(costCommitmentFinalize, "commitmentFinalize")
 	// @TODO always do a transfer of coins, i.e. check if someone has the balance
 	// unlike solidity, functions here won't revert() under you, so everything must be checked at a top level
 	return sdk.Result{}
