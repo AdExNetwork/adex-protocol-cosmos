@@ -33,3 +33,16 @@ Please see [OCEAN](https://github.com/AdExNetwork/adex-protocol/blob/master/OCEA
 `commitmentFinalizeMsg` - finalize an OCEAN commitment, submit validator votes
 
 Unlike the Ethereum implementation, the `Timeout` step is not needed here, since it will happen automatically on every block (via `EndBlocker`)
+
+
+## Rationale, discussion
+
+Compared to the existing Ethereum implementation, a Cosmos implementation offers:
+
+* Scalability and interoperability
+* More flexibility, allowing us to tweak fees, perform operations at the end of each block, therefore improving UX
+* Possible advancements in upgradability because of the governance
+
+See https://github.com/AdExNetwork/adex-core/issues/12
+
+
