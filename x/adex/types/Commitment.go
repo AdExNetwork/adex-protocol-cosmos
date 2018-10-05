@@ -6,7 +6,7 @@ import (
 
 type Commitment struct {
 	BidId []byte `json:"bidId"`
-	TotalReward sdk.Coins `json:"total_reward"`
+	TotalReward sdk.Coins `json:"totalReward"`
 	ValidUntil int64 `json:"validUntil"`
 	Advertiser sdk.AccAddress `json:"advertiser"`
 	Publisher sdk.AccAddress `json:"publisher"`
@@ -15,4 +15,4 @@ type Commitment struct {
 
 // @TODO: GetHash()
 // @TODO: IsValid() : should check if the validator reward IsLT the sum of all validator rewards (same as on eth)
-// @TODO: FromBid()
+// @TODO: FromBid() : last arg would be extraValidatorAddr; test if != nil, also test if .IsValid or smth

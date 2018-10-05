@@ -8,7 +8,7 @@ type Bid struct {
 	Advertiser sdk.AccAddress `json:"advertiser"`
 	// @TODO: adUnit, goal
 	Timeout int64 `json:"timeout"`
-	TotalReward sdk.Coins `json:"total_reward"`
+	TotalReward sdk.Coins `json:"totalReward"`
 	Nonce uint `json:"nonce"`
 	Validators []Validator `json:"validators"`
 }

@@ -16,7 +16,7 @@ type CommitmentStartMsg struct {
 	BidSig []byte `json:"bidSig"`
 	// and accepted (turned into a Commitment) by the publisher
 	Publisher sdk.AccAddress `json:"publisher"`
-	ExtraValidators []Validator `json:"extraValidators"`
+	ExtraValidatorAddr sdk.AccAddress `json:"extraValidatorAddr"`
 }
 
 func (msg CommitmentStartMsg) Name() string {
