@@ -29,6 +29,7 @@ type AdExProtocolApp struct {
 	keyMain    *sdk.KVStoreKey
 	keyAccount *sdk.KVStoreKey
 	keyIBC     *sdk.KVStoreKey
+	keyAdEx    *sdk.KVStoreKey
 
 	// manage getting and setting accounts
 	accountMapper       auth.AccountMapper
@@ -48,6 +49,7 @@ func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*ba
 		keyMain:    sdk.NewKVStoreKey("main"),
 		keyAccount: sdk.NewKVStoreKey("acc"),
 		keyIBC:     sdk.NewKVStoreKey("ibc"),
+		keyAdEx:    sdk.NewKVStoreKey("adex"),
 	}
 
 	// define and attach the mappers and keepers
@@ -71,7 +73,7 @@ func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*ba
 	app.SetAnteHandler(auth.NewAnteHandler(app.accountMapper, app.feeCollectionKeeper))
 
 	// mount the multistore and load the latest state
-	app.MountStoresIAVL(app.keyMain, app.keyAccount, app.keyIBC)
+	app.MountStoresIAVL(app.keyMain, app.keyAccount, app.keyIBC, app.keyAdEx)
 	err := app.LoadLatestVersion(app.keyMain)
 	if err != nil {
 		cmn.Exit(err.Error())
