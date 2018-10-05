@@ -56,7 +56,7 @@ func (commitment Commitment) Hash() [32]byte {
 	return sha3.Sum256(b)
 }
 
-func NewFromBid(bid Bid, validUntil int64, publisher sdk.AccAddress, extraValidator sdk.AccAddress) Commitment {
+func NewFromBid(bid Bid, publisher sdk.AccAddress, validUntil int64, extraValidator sdk.AccAddress) Commitment {
 	validators := bid.Validators
 	if extraValidator != nil && !extraValidator.Empty() {
 		validators = append(validators, Validator{
