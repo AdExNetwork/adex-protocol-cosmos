@@ -2,6 +2,8 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"golang.org/x/crypto/sha3"
+	"encoding/json"
 )
 
 const (
@@ -9,7 +11,7 @@ const (
 )
 
 type Commitment struct {
-	BidId []byte `json:"bidId"`
+	BidId [32]byte `json:"bidId"`
 	TotalReward sdk.Coins `json:"totalReward"`
 	ValidUntil int64 `json:"validUntil"`
 	Advertiser sdk.AccAddress `json:"advertiser"`
@@ -17,6 +19,7 @@ type Commitment struct {
 	Validators []Validator `json:"validators"`
 }
 
+// @TODO; tests
 func (commitment Commitment) IsValid() bool {
 	if commitment.Validators == nil {
 		return false
@@ -45,6 +48,12 @@ func (commitment Commitment) IsValid() bool {
 	return true
 }
 
-// @TODO: GetHash()
-// @TODO: IsValid() : should check if the validator reward IsLT the sum of all validator rewards (same as on eth)
+func (commitment Commitment) Hash() [32]byte {
+	b, err := json.Marshal(commitment)
+	if err != nil {
+		panic(err)
+	}
+	return sha3.Sum256(b)
+}
+
 // @TODO: FromBid() : last arg would be extraValidatorAddr; test if != nil, also test if .IsValid or smth

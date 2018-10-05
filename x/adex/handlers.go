@@ -28,7 +28,7 @@ func NewHandler(k bank.Keeper) sdk.Handler {
 
 func handleCommitmentStart(k bank.Keeper, ctx sdk.Context, msg types.CommitmentStartMsg) sdk.Result {
 	// @TODO: remove this
-	log.Println(msg)
+	log.Println(msg, msg.Bid.Hash())
 
 	// @TODO: more granular
 	ctx.GasMeter().ConsumeGas(costCommitmentStart, "commitmentStart")
