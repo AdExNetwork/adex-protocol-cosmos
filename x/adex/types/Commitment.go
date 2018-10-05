@@ -58,7 +58,7 @@ func (commitment Commitment) Hash() [32]byte {
 
 func NewFromBid(bid Bid, validUntil int64, publisher sdk.AccAddress, extraValidator sdk.AccAddress) Commitment {
 	validators := bid.Validators
-	if extraValidator != nil {
+	if extraValidator != nil && !extraValidator.Empty() {
 		validators = append(validators, Validator{
 			Address: extraValidator,
 			Reward: sdk.Coins{},
