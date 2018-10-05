@@ -56,4 +56,22 @@ func (commitment Commitment) Hash() [32]byte {
 	return sha3.Sum256(b)
 }
 
+func NewFromBid(bid Bid, validUntil int64, publisher sdk.AccAddress, extraValidator sdk.AccAddress) Commitment {
+	validators := bid.Validators
+	if extraValidator != nil {
+		validators = append(validators, Validator{
+			Address: extraValidator,
+			Reward: sdk.Coins{},
+		})
+	}
+	return Commitment{
+		BidId: bid.Hash(),
+		TotalReward: bid.TotalReward,
+		ValidUntil: validUntil,
+		Publisher: publisher,
+		Advertiser: bid.Advertiser,
+		Validators: validators,
+	}
+}
+
 // @TODO: FromBid() : last arg would be extraValidatorAddr; test if != nil, also test if .IsValid or smth
