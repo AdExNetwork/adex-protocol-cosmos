@@ -22,3 +22,14 @@ make get_tools && make get_vendor_deps && make install
 git clone https://github.com/AdExNetwork/adex-protocol-cosmos adex
 go build -o build/adexd adex/cmd/adexd/main.go && go build -o build/adexcli adex/cmd/adexcli/main.go
 ```
+
+
+## Message types
+
+Please see [OCEAN](https://github.com/AdExNetwork/adex-protocol/blob/master/OCEAN.md) to better understand the way the start/finalize operations work.
+
+`commitmentStartMsg` - start an OCEAN commitment for a specific bid
+
+`commitmentFinalizeMsg` - finalize an OCEAN commitment, submit validator votes
+
+Unlike the Ethereum implementation, the `Timeout` step is not needed here, since it will happen automatically on every block (via `EndBlocker`)
