@@ -13,5 +13,9 @@ type Bid struct {
 	Validators []Validator `json:"validators"`
 }
 
+func (bid Bid) IsValid() bool {
+	// @TODO: nonce > 0, timeout is valid, etc.
+	return true
+}
+
 // @TODO: GetHash()
-// @TODO: IsValid() - not sure if this is needed

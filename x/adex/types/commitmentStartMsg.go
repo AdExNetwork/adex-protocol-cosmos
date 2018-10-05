@@ -40,11 +40,10 @@ func (msg CommitmentStartMsg) GetSigners() []sdk.AccAddress {
 }
 
 func (msg CommitmentStartMsg) ValidateBasic() sdk.Error {
-	if len(msg.ExtraValidators) > MAX_EXTRA_VALIDATORS {
+	if !msg.Bid.IsValid() {
 		// @TODO: our own error
-		return sdk.ErrUnknownRequest("invalid amount")
+		return sdk.ErrUnknownRequest("invalid bid")
 	}
-	// @TODO: call .Bid.IsValid()
 	// @TODO: validate the sig
 
 	// NOTE: the .Publisher must be the signer of the mssage (see GetSigners)

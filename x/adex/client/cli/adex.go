@@ -40,7 +40,8 @@ func PostCmdCommitmentStart(cdc *codec.Codec) *cobra.Command {
 				Bid: types.Bid{},
 				BidSig: nil,
 				Publisher: publisher,
-				ExtraValidators: nil,
+				// @TODO: nil extra validator
+				ExtraValidatorAddr: publisher,
 			}
 
 			cliCtx.PrintResponse = true

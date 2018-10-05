@@ -34,7 +34,13 @@ func (msg CommitmentFinalizeMsg) GetSigners() []sdk.AccAddress {
 }
 
 func (msg CommitmentFinalizeMsg) ValidateBasic() sdk.Error {
-	// @TODO: many things, including Commitment.isValid
+	if !msg.Commitment.IsValid() {
+		// @TODO: proper error
+		return sdk.ErrUnknownRequest("invalid commitment")
+	}
+
+	// @TODO: should we validate signatures here?
+
 	return nil
 }
 
