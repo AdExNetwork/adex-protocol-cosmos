@@ -6,11 +6,13 @@ import (
 
 type Commitment struct {
 	BidId []byte `json:"bidId"`
-	Reward sdk.Coins `json:"reward"`
+	TotalReward sdk.Coins `json:"total_reward"`
 	ValidUntil int64 `json:"validUntil"`
 	Advertiser sdk.AccAddress `json:"advertiser"`
 	Publisher sdk.AccAddress `json:"publisher"`
 	Validators []Validator `json:"validators"`
 }
-// @TODO: validation, including all Validator rewards is not > Reward
-// alternatively, this may not be a requirement, but we have to ensure all those amounts are escrowed on commitmentStart
+
+// @TODO: GetHash()
+// @TODO: IsValid() : should check if the validator reward IsLT the sum of all validator rewards (same as on eth)
+// @TODO: FromBid()

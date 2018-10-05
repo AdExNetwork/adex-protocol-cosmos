@@ -8,9 +8,10 @@ type Bid struct {
 	Advertiser sdk.AccAddress `json:"advertiser"`
 	// @TODO: adUnit, goal
 	Timeout int64 `json:"timeout"`
-	Reward sdk.Coins `json:"reward"`
+	TotalReward sdk.Coins `json:"total_reward"`
 	Nonce uint `json:"nonce"`
 	Validators []Validator `json:"validators"`
 }
 
-// @TODO; validation
+// @TODO: GetHash()
+// @TODO: IsValid() - not sure if this is needed
