@@ -46,3 +46,10 @@ Compared to the existing Ethereum implementation, a Cosmos implementation offers
 See https://github.com/AdExNetwork/adex-core/issues/12
 
 
+## Bootstrapping
+
+We have not found any official guidelines on bootstrapping a new Cosmos SDK app. What we did is copied `examples/basecoin` from the official repository and stripped it down, most notably removing the custom `Account` type.
+
+Then, we added a simple `Makefile` that just invokes `go build`.
+
+If you have the `cosmos-sdk` repository in your `$GOPATH` and you've ran all it's needed steps (`make get_tools && make get_vendor_deps && make install`), you will be able to compile your app.
