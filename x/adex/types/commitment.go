@@ -10,8 +10,10 @@ const (
 	minValidatorCount = 2
 )
 
+type CommitmentId [32]byte
+
 type Commitment struct {
-	BidId [32]byte `json:"bidId"`
+	BidId BidId `json:"bidId"`
 	TotalReward sdk.Coins `json:"totalReward"`
 	ValidUntil int64 `json:"validUntil"`
 	Advertiser sdk.AccAddress `json:"advertiser"`
@@ -48,7 +50,7 @@ func (commitment Commitment) IsValid() bool {
 	return true
 }
 
-func (commitment Commitment) Hash() [32]byte {
+func (commitment Commitment) Hash() CommitmentId {
 	b, err := json.Marshal(commitment)
 	if err != nil {
 		panic(err)

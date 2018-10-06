@@ -11,6 +11,8 @@ const (
 	maxTimeout = 31536000
 )
 
+type BidId [32]byte
+
 type Bid struct {
 	Advertiser sdk.AccAddress `json:"advertiser"`
 	// @TODO: adUnit, goal
@@ -24,7 +26,7 @@ func (bid Bid) IsValid() bool {
 	return bid.Timeout > 0 && bid.Timeout < maxTimeout && !bid.Advertiser.Empty()
 }
 
-func (bid Bid) Hash() [32]byte {
+func (bid Bid) Hash() BidId {
 	b, err := json.Marshal(bid)
 	if err != nil {
 		panic(err)
