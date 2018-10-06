@@ -16,9 +16,9 @@ func NewHandler(k bank.Keeper, ak Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
 			case types.CommitmentStartMsg:
-				return handleCommitmentStart(k, ctx, msg)
+				return handleCommitmentStart(k, ak, ctx, msg)
 			case types.CommitmentFinalizeMsg:
-				return handleCommitmentFinalize(k, ctx, msg)
+				return handleCommitmentFinalize(k, ak, ctx, msg)
 			default:
 				errMsg := "Unrecognized adex Msg type"
 				return sdk.ErrUnknownRequest(errMsg).Result()
@@ -26,12 +26,33 @@ func NewHandler(k bank.Keeper, ak Keeper) sdk.Handler {
 	}
 }
 
-func handleCommitmentStart(k bank.Keeper, ctx sdk.Context, msg types.CommitmentStartMsg) sdk.Result {
-	// @TODO: remove this
-	log.Println(msg, msg.Bid.Hash())
+func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.CommitmentStartMsg) sdk.Result {
+	bidId := msg.Bid.Hash()
 
 	// @TODO: more granular
 	ctx.GasMeter().ConsumeGas(costCommitmentStart, "commitmentStart")
+
+	// @TODO: remove this test code
+	ak.SetBidValidUntil(ctx, bidId, uint32(30))
+	ak.SetBidValidUntil(ctx, bidId, uint32(8))
+	ak.SetBidValidUntil(ctx, bidId, uint32(2))
+	ak.SetBidValidUntil(ctx, bidId, uint32(40))
+	ak.SetBidValidUntil(ctx, bidId, uint32(44))
+	ak.SetBidValidUntil(ctx, bidId, uint32(300))
+	ak.SetBidValidUntil(ctx, bidId, uint32(304))
+	// end is exclusive
+	iterator := ak.GetValidUntilIter(ctx, 3, 305)
+	for ; ; {
+              if !iterator.Valid() {
+                      iterator.Close()
+                      break
+              }
+	      log.Println("found value at key", iterator.Key())
+              iterator.Next()
+	}
+	log.Println("iteration finished!!")
+
+
 	// @TODO can we do Bid.GetTotalReward()
 	// k.HasCoins(ctx, msg.Bid.Advertiser, msg.Bid.Reward)
 	// for validator := msg.Bid.Validators
@@ -46,11 +67,12 @@ func handleCommitmentStart(k bank.Keeper, ctx sdk.Context, msg types.CommitmentS
 	if err != nil {
 		return err.Result()
 	}
+	// @TODO: we can safely SubtractCoins here
 
 	return sdk.Result{}
 }
 
-func handleCommitmentFinalize(k bank.Keeper, ctx sdk.Context, msg types.CommitmentFinalizeMsg) sdk.Result {
+func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.CommitmentFinalizeMsg) sdk.Result {
 	// @TODO: remove this
 	log.Println(msg)
 	ctx.GasMeter().ConsumeGas(costCommitmentFinalize, "commitmentFinalize")
