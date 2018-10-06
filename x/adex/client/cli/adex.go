@@ -37,7 +37,7 @@ func PostCmdCommitmentStart(cdc *codec.Codec) *cobra.Command {
 			// @TODO: instead of empty slices, nil should be used
 			// othrewise after encoding and decoding through amino, it still ends up as a nil slice
 			msg := types.CommitmentStartMsg{
-				Bid: types.Bid{},
+				Bid: types.Bid{ Advertiser: publisher, Timeout: 200 },
 				BidSig: nil,
 				Publisher: publisher,
 				// @TODO: nil extra validator
