@@ -27,10 +27,19 @@ func NewHandler(k bank.Keeper, ak Keeper) sdk.Handler {
 }
 
 func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.CommitmentStartMsg) sdk.Result {
-	bidId := msg.Bid.Hash()
-
-	// @TODO: more granular
+	// @NOTE start real impl
+	// @TODO: more granular gas cost
 	ctx.GasMeter().ConsumeGas(costCommitmentStart, "commitmentStart")
+	bidId := msg.Bid.Hash()
+	if ak.GetBidState(ctx, bidId) != types.BidStateUnknown {
+		return sdk.ErrUnknownRequest("a commitment for this bid already exists").Result()
+	}
+	// @TODO: set validUntil
+	commitment := types.NewCommitmentFromBid(msg.Bid, msg.Publisher, 0, msg.ExtraValidatorAddr)
+	// @TODO; check commitment.IsValid()
+	log.Println(commitment)
+	// finally, k.SubtractCoins, ak.SetBidState, ak.SetBidValidUntil
+	// @NOTE end real impl
 
 	// @TODO: remove this test code
 	ak.SetBidValidUntil(ctx, bidId, uint32(30))
@@ -43,18 +52,16 @@ func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.
 	// end is exclusive
 	iterator := ak.GetValidUntilIter(ctx, 3, 305)
 	for ; ; {
-              if !iterator.Valid() {
-                      iterator.Close()
-                      break
-              }
-	      log.Println("found value at key", iterator.Key())
-              iterator.Next()
+		if !iterator.Valid() {
+			iterator.Close()
+			break
+		}
+		log.Println("found value at key", iterator.Key())
+		iterator.Next()
 	}
 	log.Println("iteration finished!!")
 
 
-	// @TODO can we do Bid.GetTotalReward()
-	// k.HasCoins(ctx, msg.Bid.Advertiser, msg.Bid.Reward)
 	// for validator := msg.Bid.Validators
 
 	// @TODO: since we presume the bid is valid (cause Validatebasic on the msg). we construct a commitment and check if that is valid
@@ -67,7 +74,7 @@ func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.
 	if err != nil {
 		return err.Result()
 	}
-	// @TODO: we can safely SubtractCoins here
+	// @TODO: we can safely SubtractCoins here for the Commitment.TotalReward
 
 	return sdk.Result{}
 }

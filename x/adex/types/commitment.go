@@ -56,11 +56,12 @@ func (commitment Commitment) Hash() [32]byte {
 	return sha3.Sum256(b)
 }
 
-func NewFromBid(bid Bid, publisher sdk.AccAddress, validUntil int64, extraValidator sdk.AccAddress) Commitment {
+func NewCommitmentFromBid(bid Bid, publisher sdk.AccAddress, validUntil int64, extraValidator sdk.AccAddress) Commitment {
 	validators := bid.Validators
 	if extraValidator != nil && !extraValidator.Empty() {
 		validators = append(validators, Validator{
 			Address: extraValidator,
+			// The extra validator should not be allowed to set their own reward
 			Reward: sdk.Coins{},
 		})
 	}

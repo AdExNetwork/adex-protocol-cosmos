@@ -44,7 +44,7 @@ func (msg CommitmentStartMsg) ValidateBasic() sdk.Error {
 		// @TODO: our own error
 		return sdk.ErrUnknownRequest("invalid bid")
 	}
-	// @TODO: validate the sig
+	// @TODO: validate the sig, whether it's valid for Bid.Advertiser
 
 	// NOTE: the .Publisher must be the signer of the mssage (see GetSigners)
 	return nil

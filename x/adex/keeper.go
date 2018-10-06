@@ -2,6 +2,7 @@ package adex
 
 import (
         sdk "github.com/cosmos/cosmos-sdk/types"
+	types "github.com/cosmos/cosmos-sdk/adex/x/adex/types"
 	"encoding/binary"
 )
 
@@ -25,9 +26,14 @@ func (k Keeper) SetBidState(ctx sdk.Context, bidId [32]byte, state byte) {
         store.Set(bidId[:], []byte{ state })
 }
 
-func (k Keeper) GetBidState(ctx sdk.Context, bidId [32]byte) byte {
+func (k Keeper) GetBidState(ctx sdk.Context, bidId [32]byte) uint8 {
 	store := ctx.KVStore(k.storeKey).Prefix([]byte(bidStateKey))
-	return store.Get(bidId[:])[0]
+	val := store.Get(bidId[:])
+	if len(val) == 0 {
+		return types.BidStateUnknown
+	}
+	// @TODO: commitment
+	return uint8(val[0])
 }
 
 // @TODO: think of safely casting int to uint32
