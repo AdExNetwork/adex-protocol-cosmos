@@ -23,7 +23,8 @@ type Commitment struct {
 
 // @TODO; tests
 func (commitment Commitment) IsValid() bool {
-	if commitment.Validators == nil {
+	// @TODO: figure out if we need the nil ref/slice checks; it all depends on what happens when deserializing
+	if commitment.Validators == nil || commitment.TotalReward == nil {
 		return false
 	}
 	if len(commitment.Validators) < minValidatorCount {
@@ -33,11 +34,6 @@ func (commitment Commitment) IsValid() bool {
 	if commitment.ValidUntil <= 0 {
 		return false
 	}
-
-	if commitment.TotalReward == nil {
-		return false
-	}
-	// @TODO: should we have those checks for the addresses?
 
 	validatorRewards := sdk.Coins{}
 	for _, validator := range commitment.Validators {
@@ -76,5 +72,3 @@ func NewCommitmentFromBid(bid Bid, publisher sdk.AccAddress, validUntil int64, e
 		Validators: validators,
 	}
 }
-
-// @TODO: FromBid() : last arg would be extraValidatorAddr; test if != nil, also test if .IsValid or smth

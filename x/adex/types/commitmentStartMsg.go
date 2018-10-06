@@ -36,6 +36,7 @@ func (msg CommitmentStartMsg) GetSignBytes() []byte {
 }
 
 func (msg CommitmentStartMsg) GetSigners() []sdk.AccAddress {
+	// This message should be signed by the publisher, but the advertiser previously signed the Bid
 	return []sdk.AccAddress{msg.Publisher}
 }
 
@@ -46,7 +47,6 @@ func (msg CommitmentStartMsg) ValidateBasic() sdk.Error {
 	}
 	// @TODO: validate the sig, whether it's valid for Bid.Advertiser
 
-	// NOTE: the .Publisher must be the signer of the mssage (see GetSigners)
 	return nil
 }
 
