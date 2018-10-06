@@ -36,6 +36,7 @@ type AdExProtocolApp struct {
 	feeCollectionKeeper auth.FeeCollectionKeeper
 	coinKeeper          bank.Keeper
 	ibcMapper           ibc.Mapper
+	adexKeeper          adex.Keeper
 }
 
 func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.BaseApp)) *AdExProtocolApp {
@@ -60,12 +61,13 @@ func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*ba
 	)
 	app.coinKeeper = bank.NewBaseKeeper(app.accountMapper)
 	app.ibcMapper = ibc.NewMapper(app.cdc, app.keyIBC, app.RegisterCodespace(ibc.DefaultCodespace))
+	app.adexKeeper = adex.NewKeeper(app.keyAdEx)
 
 	// register message routes: all messages starting with adex/ will be routed to the adex handler
 	app.Router().
 		AddRoute("bank", bank.NewHandler(app.coinKeeper)).
 		AddRoute("ibc", ibc.NewHandler(app.ibcMapper, app.coinKeeper)).
-		AddRoute("adex", adex.NewHandler(app.coinKeeper))
+		AddRoute("adex", adex.NewHandler(app.coinKeeper, app.adexKeeper))
 
 	// perform initialization logic
 	app.SetInitChainer(app.InitChainer)

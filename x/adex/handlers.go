@@ -12,7 +12,7 @@ const (
 	costCommitmentFinalize = 5000
 )
 
-func NewHandler(k bank.Keeper) sdk.Handler {
+func NewHandler(k bank.Keeper, ak Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
 			case types.CommitmentStartMsg:
