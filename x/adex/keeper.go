@@ -28,7 +28,7 @@ func (k Keeper) SetBidState(ctx sdk.Context, bidId types.BidId, state uint8) {
 func (k Keeper) SetBidActive(ctx sdk.Context, bidId types.BidId, commitmentId types.CommitmentId, validUntil int64) {
         store := ctx.KVStore(k.storeKey).Prefix([]byte(bidStateKey))
 	store.Set(bidId[:], commitmentId[:])
-	k.SetBidValidUntil(ctx, bidId, validUntil)
+	k.setBidValidUntil(ctx, bidId, validUntil)
 }
 
 func (k Keeper) GetBidState(ctx sdk.Context, bidId types.BidId) uint8 {
@@ -47,21 +47,24 @@ func (k Keeper) GetBidState(ctx sdk.Context, bidId types.BidId) uint8 {
 	panic("unknown bid state")
 }
 
-// @TODO: make this private
 // @TODO: how can we safely cast here?
-func (k Keeper) SetBidValidUntil(ctx sdk.Context, bidId types.BidId, validUntil int64) {
-	store := ctx.KVStore(k.storeKey).Prefix([]byte(validUntilKey))
-	b := make([]byte, 8)
-	binary.LittleEndian.PutUint64(b, uint64(validUntil))
-	// @TODO: add the bidId on to the current value
-	store.Set(b, bidId[:])
-}
-
 func (k Keeper) GetValidUntilIter(ctx sdk.Context, start int64, end int64) sdk.Iterator {
-	store := ctx.KVStore(k.storeKey).Prefix([]byte("bidValidUntil"))
+	// @TODO: perhaps we should make our own iterator, where we unfold each value into bidId's
+	store := ctx.KVStore(k.storeKey).Prefix([]byte(validUntilKey))
 	startB := make([]byte, 8)
 	endB := make([]byte, 8)
 	binary.LittleEndian.PutUint64(startB, uint64(start))
 	binary.LittleEndian.PutUint64(endB, uint64(end))
 	return store.Iterator(startB[:], endB[:])
+}
+
+func (k Keeper) setBidValidUntil(ctx sdk.Context, bidId types.BidId, validUntil int64) {
+	store := ctx.KVStore(k.storeKey).Prefix([]byte(validUntilKey))
+
+	key := make([]byte, 8)
+	binary.LittleEndian.PutUint64(key, uint64(validUntil))
+
+	bids := store.Get(key)
+	bids = append(bids, bidId[:]...)
+	store.Set(key, bids)
 }
