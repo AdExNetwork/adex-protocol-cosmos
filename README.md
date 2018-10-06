@@ -53,3 +53,14 @@ We have not found any official guidelines on bootstrapping a new Cosmos SDK app.
 Then, we added a simple `Makefile` that just invokes `go build`.
 
 If you have the `cosmos-sdk` repository in your `$GOPATH` and you've ran all it's needed steps (`make get_tools && make get_vendor_deps && make install`), you will be able to compile your app.
+
+## There be dragons
+
+Because the experimental nature of the cosmos-sdk, there are many potential security (and otherwise) risks that might exist in this codebase.
+
+For example:
+
+* the security of the arithmetic operations with `sdk.Coins`
+* nil pointers/slices and all the `sdk` types that are pointers/slices
+* go-amino: possible serialization/deserialization bugs and inconsistencies
+
