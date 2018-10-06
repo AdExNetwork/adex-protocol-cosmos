@@ -28,7 +28,7 @@ func (commitment Commitment) IsValid() bool {
 		return false
 	}
 
-	if commitment.ValidUntil == 0 {
+	if commitment.ValidUntil <= 0 {
 		return false
 	}
 
