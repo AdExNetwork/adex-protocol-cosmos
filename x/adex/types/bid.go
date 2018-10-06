@@ -21,7 +21,7 @@ type Bid struct {
 }
 
 func (bid Bid) IsValid() bool {
-	return bid.Timeout > 0 && bid.Timeout < maxTimeout
+	return bid.Timeout > 0 && bid.Timeout < maxTimeout && !bid.Advertiser.Empty()
 }
 
 func (bid Bid) Hash() [32]byte {
