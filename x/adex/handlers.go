@@ -27,15 +27,14 @@ func NewHandler(k bank.Keeper, ak Keeper) sdk.Handler {
 }
 
 func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.CommitmentStartMsg) sdk.Result {
-	// @NOTE start real impl
 	ctx.GasMeter().ConsumeGas(costCommitmentStart, "commitmentStart")
 
 	bidId := msg.Bid.Hash()
 	if ak.GetBidState(ctx, bidId) != types.BidStateUnknown {
 		return sdk.ErrUnknownRequest("a commitment for this bid already exists").Result()
 	}
-	// @TODO: set validUntil
-	commitment := types.NewCommitmentFromBid(msg.Bid, msg.Publisher, 0, msg.ExtraValidatorAddr)
+	validUntil := ctx.BlockHeader().Time.Unix() + msg.Bid.Timeout
+	commitment := types.NewCommitmentFromBid(msg.Bid, msg.Publisher, validUntil, msg.ExtraValidatorAddr)
 	if !commitment.IsValid() {
 		return sdk.ErrUnknownRequest("commitment is not valid").Result()
 	}
