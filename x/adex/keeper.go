@@ -4,6 +4,7 @@ import (
         sdk "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/adex/x/adex/types"
 	"encoding/binary"
+	"bytes"
 )
 
 const (
@@ -29,6 +30,12 @@ func (k Keeper) SetBidActive(ctx sdk.Context, bidId types.BidId, commitmentId ty
         store := ctx.KVStore(k.storeKey).Prefix([]byte(bidStateKey))
 	store.Set(bidId[:], commitmentId[:])
 	k.setBidValidUntil(ctx, bidId, validUntil)
+}
+
+func (k Keeper) IsBidActive(ctx sdk.Context, bidId types.BidId, commitmentId types.CommitmentId) bool {
+	store := ctx.KVStore(k.storeKey).Prefix([]byte(bidStateKey))
+	expectedCommitmentId := store.Get(bidId[:])
+	return bytes.Equal(expectedCommitmentId, commitmentId[:])
 }
 
 func (k Keeper) GetBidState(ctx sdk.Context, bidId types.BidId) uint8 {
