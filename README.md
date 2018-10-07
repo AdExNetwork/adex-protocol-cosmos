@@ -29,6 +29,10 @@ make
 
 Please see [OCEAN](https://github.com/AdExNetwork/adex-protocol/blob/master/OCEAN.md) to better understand the way the start/finalize operations work.
 
+Prior to any of the following messages, bids are unknown to the blockchain. If they're cancelled, their hash is being flagged as cancelled so they cannot ever be interacted with. Otherwise, they get wrapped into a commitment using `commitmentStartMsg`, and once the commitment goal has been delivered, we call `commitmentFinalizeMsg`. For more details on the protocol, see [AdEx Protocol](https://github.com/AdExNetwork/adex-protocol).
+
+`bidCancelMsg` - cancel a bid
+
 `commitmentStartMsg` - start an OCEAN commitment for a specific bid
 
 `commitmentFinalizeMsg` - finalize an OCEAN commitment, submit validator votes
