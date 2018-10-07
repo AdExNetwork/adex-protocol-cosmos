@@ -36,8 +36,18 @@ func PostCmdCommitmentStart(cdc *codec.Codec) *cobra.Command {
 			// @TODO
 			// @TODO: instead of empty slices, nil should be used
 			// othrewise after encoding and decoding through amino, it still ends up as a nil slice
+			validators := []types.Validator{
+				types.Validator{ Address: publisher, Reward: sdk.Coins{{ "adex", sdk.NewInt(1) }} },
+				types.Validator{ Address: publisher, Reward: sdk.Coins{{ "adex", sdk.NewInt(2) }} },
+			}
+			bid := types.Bid{
+				Advertiser: publisher,
+				Timeout: 20,
+				Validators: validators,
+				TotalReward: sdk.Coins{{ "adex", sdk.NewInt(99) }},
+			}
 			msg := types.CommitmentStartMsg{
-				Bid: types.Bid{ Advertiser: publisher, Timeout: 200 },
+				Bid: bid,
 				BidSig: nil,
 				Publisher: publisher,
 				// @TODO: nil extra validator
