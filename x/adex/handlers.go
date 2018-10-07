@@ -59,15 +59,13 @@ func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg typ
 
 	// Check signatures for each validator
 	expectSigned := append(commitmentId[:], msg.Vote...)
-	rewardedValidators := make([]types.Validator, 0)
-	validSignatures := 0
+	validatorsWhoVoted := make([]types.Validator, 0)
 	for i, validator := range msg.Commitment.Validators {
 		if signedmsg.IsSigned(validator.Address, expectSigned, msg.Signatures[i]) {
-			validSignatures++
-			rewardedValidators = append(rewardedValidators, validator)
+			validatorsWhoVoted = append(validatorsWhoVoted, validator)
 		}
 	}
-	if validSignatures*3 < len(msg.Commitment.Validators)*2 {
+	if len(validatorsWhoVoted)*3 < len(msg.Commitment.Validators)*2 {
 		return sdk.ErrUnknownRequest("not enough valid signatures: 2/3 of validators or more required").Result()
 	}
 
@@ -87,7 +85,7 @@ func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg typ
 
 	// Distribute rewards
 	remainingReward := msg.Commitment.TotalReward
-	for _, validator := range rewardedValidators {
+	for _, validator := range validatorsWhoVoted {
 		remainingReward = remainingReward.Minus(validator.Reward)
 		_, _, err := k.AddCoins(ctx, validator.Address, validator.Reward)
 		if err != nil {
