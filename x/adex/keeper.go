@@ -54,7 +54,7 @@ func (k Keeper) GetBidState(ctx sdk.Context, bidId types.BidId) uint8 {
 	panic("unknown bid state")
 }
 
-func (k Keeper) IterateCommitmentsExpiringBetween(ctx sdk.Context, start int64, end int64, f func(id types.BidId)) {
+func (k Keeper) IterateCommitmentsExpiringBetween(ctx sdk.Context, start int64, end int64, f func(id types.BidId) error) {
 	// @TODO: perhaps we should make our own iterator, where we unfold each value into bidId's
 	store := ctx.KVStore(k.storeKey).Prefix([]byte(validUntilKey))
 	startB := make([]byte, 8)

@@ -104,13 +104,15 @@ func MakeCodec() *codec.Codec {
 }
 
 func (app *AdExProtocolApp) EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock) abci.ResponseEndBlock {
-	app.adexKeeper.IterateCommitmentsExpiringBetween(ctx, 0, ctx.BlockHeader().Time.Unix(), func(bidId types.BidId) {
+	app.adexKeeper.IterateCommitmentsExpiringBetween(ctx, 0, ctx.BlockHeader().Time.Unix(), func(bidId types.BidId) error {
 		if app.adexKeeper.GetBidState(ctx, bidId) != types.BidStateActive {
-			return
+			return nil
 		}
 
 		app.adexKeeper.SetBidState(ctx, bidId, types.BidStateExpired)
 		// @TODO: refund here...
+		// @TODO: mark it as expired, therefore removing it from this structure
+		return nil
 	})
 	return abci.ResponseEndBlock{}
 }
