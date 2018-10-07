@@ -15,7 +15,8 @@ type BidId [32]byte
 
 type Bid struct {
 	Advertiser sdk.AccAddress `json:"advertiser"`
-	// @TODO: adUnit, goal
+	AdUnit []byte `json:"adUnit"`
+	Goal []byte `json:"byte"`
 	TotalReward sdk.Coins `json:"totalReward"`
 	Timeout int64 `json:"timeout"`
 	Nonce int64 `json:"nonce"`
@@ -32,4 +33,10 @@ func (bid Bid) Hash() BidId {
 		panic(err)
 	}
 	return sha3.Sum256(b)
+}
+
+func (bid Bid) IsValidSignature(sig []byte) bool {
+	// @TODO validate sig against the bid
+	//hash := bid.Hash()
+	return true
 }

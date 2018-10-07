@@ -39,7 +39,7 @@ func (msg CommitmentFinalizeMsg) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("invalid commitment")
 	}
 
-	// @TODO: should we validate signatures here?
+	// @TODO: validate signatures here, require 2/3rds or more
 
 	return nil
 }

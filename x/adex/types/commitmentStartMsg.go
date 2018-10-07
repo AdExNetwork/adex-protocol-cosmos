@@ -42,11 +42,11 @@ func (msg CommitmentStartMsg) GetSigners() []sdk.AccAddress {
 
 func (msg CommitmentStartMsg) ValidateBasic() sdk.Error {
 	if !msg.Bid.IsValid() {
-		// @TODO: our own error
 		return sdk.ErrUnknownRequest("invalid bid")
 	}
-	// @TODO: validate the sig, whether it's valid for Bid.Advertiser
-
+	if !msg.Bid.IsValidSignature(msg.BidSig) {
+		return sdk.ErrUnknownRequest("bid signature not valid")
+	}
 	return nil
 }
 
