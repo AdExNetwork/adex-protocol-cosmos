@@ -35,6 +35,10 @@ func (commitment Commitment) IsValid() bool {
 		return false
 	}
 
+	if !commitment.TotalReward.IsNotNegative() {
+		return false
+	}
+
 	validatorRewards := sdk.Coins{}
 	for _, validator := range commitment.Validators {
 		validatorRewards = validatorRewards.Plus(validator.Reward)
