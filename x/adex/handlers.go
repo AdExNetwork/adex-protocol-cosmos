@@ -4,7 +4,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/adex/x/adex/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	"log"
 )
 
 const (
@@ -49,15 +48,45 @@ func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.
 }
 
 func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.CommitmentFinalizeMsg) sdk.Result {
-	// @TODO: remove this
-	log.Println(msg)
-
-	// then on finalize/timeout, assuming the commitment exists, we distribute the balances back; we should credit the validator rewards for validators
-	// that did not sign back to the advertiser
 	ctx.GasMeter().ConsumeGas(costCommitmentFinalize, "commitmentFinalize")
-	// @TODO always do a transfer of coins, i.e. check if someone has the balance
-	// unlike solidity, functions here won't revert() under you, so everything must be checked at a top level
+
+	commitmentId := msg.Commitment.Hash()
+	if !ak.IsBidActive(ctx, msg.Commitment.BidId, commitmentId) {
+		return sdk.ErrUnknownRequest("there is no active bid with that commitment").Result()
+	}
+
+	// @TODO: check signatures for each validator here
+	rewardedValidators := msg.Commitment.Validators
+
+	var newState uint8
+	var rewardRecepient sdk.AccAddress
+	if len(msg.Vote) == 1 && msg.Vote[0] == 0 {
+		newState = types.BidStateFailed
+		rewardRecepient = msg.Commitment.Advertiser
+	} else {
+		newState = types.BidStateSucceeded
+		rewardRecepient = msg.Commitment.Publisher
+	}
+
+	// Mark the bid as failed/suceeded
+	ak.SetBidState(ctx, msg.Commitment.BidId, newState)
+
+	// Distribute rewards
+	remainingReward := msg.Commitment.TotalReward
+	for _, validator := range rewardedValidators {
+		remainingReward = remainingReward.Minus(validator.Reward)
+		_, _, err := k.AddCoins(ctx, validator.Address, validator.Reward)
+		if err != nil {
+			return err.Result()
+		}
+	}
+	_, _, err := k.AddCoins(ctx, rewardRecepient, remainingReward)
+	if err != nil {
+		return err.Result()
+	}
+
 	return sdk.Result{}
 }
 
-// @TODO handle timeout
+// @TODO handle timeout on endblocker
+// @TODO: handle bid cancel

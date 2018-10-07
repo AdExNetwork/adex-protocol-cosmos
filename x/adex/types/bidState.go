@@ -9,5 +9,5 @@ const (
 	BidStateFailed = 4
 
 	// success states
-	BidStateSucceed = 5
+	BidStateSucceeded = 5
 )
