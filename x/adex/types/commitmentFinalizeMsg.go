@@ -38,7 +38,14 @@ func (msg CommitmentFinalizeMsg) ValidateBasic() sdk.Error {
 		// @TODO: proper error
 		return sdk.ErrUnknownRequest("invalid commitment")
 	}
+	if len(msg.Commitment.Validators) != len(msg.Signatures) {
+		return sdk.ErrUnknownRequest("invalid number of signatures")
+	}
+	if len(msg.Vote) == 0 {
+		return sdk.ErrUnknownRequest("empty vote")
+	}
 
+	//toSign = append(msg.Commitment.Hash(), msg.Vote...)
 	// @TODO: validate signatures here, require 2/3rds or more
 
 	return nil
