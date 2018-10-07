@@ -20,7 +20,8 @@ make get_tools && make get_vendor_deps && make install
 
 ```
 git clone https://github.com/AdExNetwork/adex-protocol-cosmos adex
-go build -o build/adexd adex/cmd/adexd/main.go && go build -o build/adexcli adex/cmd/adexcli/main.go
+cd adex
+make
 ```
 
 
