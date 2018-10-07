@@ -103,7 +103,15 @@ func MakeCodec() *codec.Codec {
 	return cdc
 }
 
-func (app *AdExProtocolApp) EndBlocker(_ sdk.Context, _ abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *AdExProtocolApp) EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock) abci.ResponseEndBlock {
+	app.adexKeeper.IterateCommitmentsExpiringBetween(ctx, 0, ctx.BlockHeader().Time.Unix(), func(bidId types.BidId) {
+		if app.adexKeeper.GetBidState(ctx, bidId) != types.BidStateActive {
+			return
+		}
+
+		app.adexKeeper.SetBidState(ctx, bidId, types.BidStateExpired)
+		// @TODO: refund here...
+	})
 	return abci.ResponseEndBlock{}
 }
 

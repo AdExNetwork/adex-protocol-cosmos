@@ -115,6 +115,3 @@ func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg typ
 
 	return sdk.Result{}
 }
-
-// @TODO handle timeout on endblocker
-// @TODO: handle bid cancel
