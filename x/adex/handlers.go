@@ -8,6 +8,7 @@ import (
 )
 
 const (
+	costBidCancel = 1000
 	costCommitmentStart = 3000
 	costCommitmentFinalize = 5000
 )
@@ -15,6 +16,8 @@ const (
 func NewHandler(k bank.Keeper, ak Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
+			case types.BidCancelMsg:
+				return handleBidCancel(ak, ctx, msg)
 			case types.CommitmentStartMsg:
 				return handleCommitmentStart(k, ak, ctx, msg)
 			case types.CommitmentFinalizeMsg:
@@ -24,6 +27,19 @@ func NewHandler(k bank.Keeper, ak Keeper) sdk.Handler {
 				return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}
+}
+
+func handleBidCancel(ak Keeper, ctx sdk.Context, msg types.BidCancelMsg) sdk.Result {
+	ctx.GasMeter().ConsumeGas(costBidCancel, "bidCancel")
+
+	bidId := msg.Bid.Hash()
+	if ak.GetBidState(ctx, bidId) != types.BidStateUnknown {
+		return sdk.ErrUnknownRequest("a commitment for this bid already exists").Result()
+	}
+
+	ak.SetBidState(ctx, bidId, types.BidStateCancelled)
+
+	return sdk.Result{}
 }
 
 func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.CommitmentStartMsg) sdk.Result {
