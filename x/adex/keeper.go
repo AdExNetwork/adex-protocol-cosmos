@@ -35,7 +35,7 @@ func (k Keeper) SetBidActiveCommitment(ctx sdk.Context, bidId types.BidId, commi
 	k.setCommitmentValidUntil(ctx, bidId, commitment)
 }
 
-func (k Keeper) IsBidActive(ctx sdk.Context, bidId types.BidId, commitmentId types.CommitmentId) bool {
+func (k Keeper) IsBidActiveCommitment(ctx sdk.Context, bidId types.BidId, commitmentId types.CommitmentId) bool {
 	store := ctx.KVStore(k.storeKey).Prefix([]byte(bidStateKey))
 	expectedCommitmentId := store.Get(bidId[:])
 	return bytes.Equal(expectedCommitmentId, commitmentId[:])

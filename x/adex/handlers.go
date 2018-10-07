@@ -69,7 +69,7 @@ func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg typ
 
 	// check if the state is correct
 	commitmentId := msg.Commitment.Hash()
-	if !ak.IsBidActive(ctx, msg.Commitment.BidId, commitmentId) {
+	if !ak.IsBidActiveCommitment(ctx, msg.Commitment.BidId, commitmentId) {
 		return sdk.ErrUnknownRequest("there is no active bid with that commitment").Result()
 	}
 
