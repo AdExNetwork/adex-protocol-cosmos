@@ -55,7 +55,7 @@ func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.
 		return sdk.ErrUnknownRequest("commitment is not valid").Result()
 	}
 
-	ak.SetBidActive(ctx, bidId, commitment.Hash(), commitment.ValidUntil)
+	ak.SetBidActiveCommitment(ctx, bidId, commitment)
 
 	_, _, err := k.SubtractCoins(ctx, commitment.Advertiser, commitment.TotalReward)
 	if err != nil {

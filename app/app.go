@@ -104,14 +104,14 @@ func MakeCodec() *codec.Codec {
 }
 
 func (app *AdExProtocolApp) EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock) abci.ResponseEndBlock {
-	app.adexKeeper.IterateCommitmentsExpiringBetween(ctx, 0, ctx.BlockHeader().Time.Unix(), func(bidId types.BidId) error {
-		if app.adexKeeper.GetBidState(ctx, bidId) != types.BidStateActive {
+	app.adexKeeper.CleanupCommitmentsExpiringBetween(ctx, 0, ctx.BlockHeader().Time.Unix(), func(refund types.CommitmentRefund) error {
+		if app.adexKeeper.GetBidState(ctx, refund.BidId) != types.BidStateActive {
 			return nil
 		}
 
-		app.adexKeeper.SetBidState(ctx, bidId, types.BidStateExpired)
-		// @TODO: refund here...
-		// @TODO: mark it as expired, therefore removing it from this structure
+		// NOTE: AddCoins can only fail if the TotalReward is negative, and we check that in commitment.IsValid()
+		app.adexKeeper.SetBidState(ctx, refund.BidId, types.BidStateExpired)
+		app.coinKeeper.AddCoins(ctx, refund.Beneficiary, refund.TotalReward)
 		return nil
 	})
 	return abci.ResponseEndBlock{}

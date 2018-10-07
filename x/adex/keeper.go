@@ -26,10 +26,11 @@ func (k Keeper) SetBidState(ctx sdk.Context, bidId types.BidId, state uint8) {
         store.Set(bidId[:], []byte{ byte(state) })
 }
 
-func (k Keeper) SetBidActive(ctx sdk.Context, bidId types.BidId, commitmentId types.CommitmentId, validUntil int64) {
+func (k Keeper) SetBidActiveCommitment(ctx sdk.Context, bidId types.BidId, commitment types.Commitment) {
         store := ctx.KVStore(k.storeKey).Prefix([]byte(bidStateKey))
+	commitmentId := commitment.Hash()
 	store.Set(bidId[:], commitmentId[:])
-	k.setCommitmentValidUntil(ctx, bidId, validUntil)
+	k.setCommitmentValidUntil(ctx, bidId, commitment)
 }
 
 func (k Keeper) IsBidActive(ctx sdk.Context, bidId types.BidId, commitmentId types.CommitmentId) bool {
@@ -54,8 +55,7 @@ func (k Keeper) GetBidState(ctx sdk.Context, bidId types.BidId) uint8 {
 	panic("unknown bid state")
 }
 
-func (k Keeper) IterateCommitmentsExpiringBetween(ctx sdk.Context, start int64, end int64, f func(id types.BidId) error) {
-	// @TODO: perhaps we should make our own iterator, where we unfold each value into bidId's
+func (k Keeper) CleanupCommitmentsExpiringBetween(ctx sdk.Context, start int64, end int64, f func(id types.CommitmentRefund) error) {
 	store := ctx.KVStore(k.storeKey).Prefix([]byte(validUntilKey))
 	startB := make([]byte, 8)
 	endB := make([]byte, 8)
@@ -78,18 +78,21 @@ func (k Keeper) IterateCommitmentsExpiringBetween(ctx sdk.Context, start int64, 
 			end = start+32
 			id := types.BidId{}
 			copy(id[:], allIds[start:end])
-			f(id)
+			// @TODO
+			f(types.CommitmentRefund{ BidId: id, TotalReward: sdk.Coins{}, Beneficiary: sdk.AccAddress{} })
 		}
 
 		iter.Next()
 	}
+	// @TODO: clean them up from the state tree
 }
 
-func (k Keeper) setCommitmentValidUntil(ctx sdk.Context, bidId types.BidId, validUntil int64) {
+func (k Keeper) setCommitmentValidUntil(ctx sdk.Context, bidId types.BidId, commitment types.Commitment) {
 	store := ctx.KVStore(k.storeKey).Prefix([]byte(validUntilKey))
 
+	// @TODO: put types.CommitmentRefund
 	key := make([]byte, 8)
-	binary.LittleEndian.PutUint64(key, uint64(validUntil))
+	binary.LittleEndian.PutUint64(key, uint64(commitment.ValidUntil))
 
 	bids := store.Get(key)
 	bids = append(bids, bidId[:]...)
