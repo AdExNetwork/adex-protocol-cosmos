@@ -61,7 +61,7 @@ func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*ba
 	)
 	app.coinKeeper = bank.NewBaseKeeper(app.accountMapper)
 	app.ibcMapper = ibc.NewMapper(app.cdc, app.keyIBC, app.RegisterCodespace(ibc.DefaultCodespace))
-	app.adexKeeper = adex.NewKeeper(app.keyAdEx)
+	app.adexKeeper = adex.NewKeeper(app.keyAdEx, app.cdc)
 
 	// register message routes: all messages starting with adex/ will be routed to the adex handler
 	app.Router().
