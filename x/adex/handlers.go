@@ -4,6 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/adex/x/adex/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	signedmsg "github.com/cosmos/cosmos-sdk/adex/x/adex/signedmsg"
 )
 
 const (
@@ -50,14 +51,27 @@ func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.
 func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.CommitmentFinalizeMsg) sdk.Result {
 	ctx.GasMeter().ConsumeGas(costCommitmentFinalize, "commitmentFinalize")
 
+	// check if the state is correct
 	commitmentId := msg.Commitment.Hash()
 	if !ak.IsBidActive(ctx, msg.Commitment.BidId, commitmentId) {
 		return sdk.ErrUnknownRequest("there is no active bid with that commitment").Result()
 	}
 
-	// @TODO: check signatures for each validator here
-	rewardedValidators := msg.Commitment.Validators
+	// Check signatures for each validator
+	expectSigned := append(commitmentId[:], msg.Vote...)
+	rewardedValidators := make([]types.Validator, 0)
+	validSignatures := 0
+	for i, validator := range msg.Commitment.Validators {
+		if signedmsg.IsSigned(validator.Address, expectSigned, msg.Signatures[i]) {
+			validSignatures++
+			rewardedValidators = append(rewardedValidators, validator)
+		}
+	}
+	if validSignatures*3 < len(msg.Commitment.Validators)*2 {
+		return sdk.ErrUnknownRequest("not enough valid signatures: 2/3 of validators or more required").Result()
+	}
 
+	// a vote of 1 zero byte means failure to deliver
 	var newState uint8
 	var rewardRecepient sdk.AccAddress
 	if len(msg.Vote) == 1 && msg.Vote[0] == 0 {

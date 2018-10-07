@@ -45,9 +45,6 @@ func (msg CommitmentFinalizeMsg) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("empty vote")
 	}
 
-	//toSign = append(msg.Commitment.Hash(), msg.Vote...)
-	// @TODO: validate signatures here, require 2/3rds or more
-
 	return nil
 }
 

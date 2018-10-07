@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"golang.org/x/crypto/sha3"
+	signedmsg "github.com/cosmos/cosmos-sdk/adex/x/adex/signedmsg"
 )
 
 const (
@@ -36,7 +37,6 @@ func (bid Bid) Hash() BidId {
 }
 
 func (bid Bid) IsValidSignature(sig []byte) bool {
-	// @TODO validate sig against the bid
-	//hash := bid.Hash()
-	return true
+	bidId := bid.Hash()
+	return signedmsg.IsSigned(bid.Advertiser, bidId[:], sig)
 }
