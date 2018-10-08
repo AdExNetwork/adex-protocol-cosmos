@@ -52,6 +52,7 @@ func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.
 	validUntil := ctx.BlockHeader().Time.Unix() + msg.Bid.Timeout
 	commitment := types.NewCommitmentFromBid(msg.Bid, msg.Publisher, validUntil, msg.ExtraValidatorPubKey)
 	if !commitment.IsValid() {
+		// @TODO: detailed info on why the commitment is not valid
 		return sdk.ErrUnknownRequest("commitment is not valid").Result()
 	}
 
