@@ -45,7 +45,7 @@ func (msg CommitmentStartMsg) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("invalid bid")
 	}
 	if !msg.Bid.IsValidSignature(msg.BidSig) {
-		return sdk.ErrUnknownRequest("bid signature not valid")
+		return sdk.ErrUnauthorized("bid signature not valid")
 	}
 	return nil
 }
