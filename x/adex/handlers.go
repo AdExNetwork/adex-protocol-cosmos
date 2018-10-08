@@ -50,7 +50,7 @@ func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.
 		return sdk.ErrUnknownRequest("a commitment for this bid already exists").Result()
 	}
 	validUntil := ctx.BlockHeader().Time.Unix() + msg.Bid.Timeout
-	commitment := types.NewCommitmentFromBid(msg.Bid, msg.Publisher, validUntil, msg.ExtraValidatorAddr)
+	commitment := types.NewCommitmentFromBid(msg.Bid, msg.Publisher, validUntil, msg.ExtraValidatorPubKey)
 	if !commitment.IsValid() {
 		return sdk.ErrUnknownRequest("commitment is not valid").Result()
 	}
@@ -77,7 +77,7 @@ func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg typ
 	expectSigned := append(commitmentId[:], msg.Vote...)
 	validatorsWhoVoted := make([]types.Validator, 0)
 	for i, validator := range msg.Commitment.Validators {
-		if signedmsg.IsSigned(validator.Address, expectSigned, msg.Signatures[i]) {
+		if signedmsg.IsSigned(validator.PubKey, expectSigned, msg.Signatures[i]) {
 			validatorsWhoVoted = append(validatorsWhoVoted, validator)
 		}
 	}
@@ -103,7 +103,7 @@ func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg typ
 	remainingReward := msg.Commitment.TotalReward
 	for _, validator := range validatorsWhoVoted {
 		remainingReward = remainingReward.Minus(validator.Reward)
-		_, _, err := k.AddCoins(ctx, validator.Address, validator.Reward)
+		_, _, err := k.AddCoins(ctx, validator.GetAccAddress(), validator.Reward)
 		if err != nil {
 			return err.Result()
 		}

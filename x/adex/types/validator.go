@@ -2,9 +2,18 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/crypto"
 )
 
 type Validator struct {
-	Address sdk.AccAddress `json:"address"`
+	PubKey crypto.PubKey `json:"pubkey"`
 	Reward sdk.Coins `json:"reward"`
+}
+
+func (v Validator) IsValid() bool {
+	return v.PubKey != nil
+}
+
+func (v Validator) GetAccAddress() sdk.AccAddress {
+	return sdk.AccAddress(v.PubKey.Address())
 }

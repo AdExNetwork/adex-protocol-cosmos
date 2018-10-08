@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"golang.org/x/crypto/sha3"
+	"github.com/tendermint/tendermint/crypto"
 	"encoding/json"
 )
 
@@ -29,6 +30,11 @@ func (commitment Commitment) IsValid() bool {
 	}
 	if len(commitment.Validators) < minValidatorCount {
 		return false
+	}
+	for _, validator := range commitment.Validators {
+		if !validator.IsValid() {
+			return false
+		}
 	}
 
 	if commitment.ValidUntil <= 0 {
@@ -58,11 +64,11 @@ func (commitment Commitment) Hash() CommitmentId {
 	return sha3.Sum256(b)
 }
 
-func NewCommitmentFromBid(bid Bid, publisher sdk.AccAddress, validUntil int64, extraValidator sdk.AccAddress) Commitment {
+func NewCommitmentFromBid(bid Bid, publisher sdk.AccAddress, validUntil int64, extraValidator crypto.PubKey) Commitment {
 	validators := bid.Validators
-	if extraValidator != nil && !extraValidator.Empty() {
+	if extraValidator != nil {
 		validators = append(validators, Validator{
-			Address: extraValidator,
+			PubKey: extraValidator,
 			// The extra validator should not be allowed to set their own reward
 			Reward: sdk.Coins{},
 		})
@@ -72,7 +78,7 @@ func NewCommitmentFromBid(bid Bid, publisher sdk.AccAddress, validUntil int64, e
 		TotalReward: bid.TotalReward,
 		ValidUntil: validUntil,
 		Publisher: publisher,
-		Advertiser: bid.Advertiser,
+		Advertiser: bid.GetAdvertiserAddress(),
 		Validators: validators,
 	}
 }

@@ -27,7 +27,7 @@ func (msg BidCancelMsg) GetSignBytes() []byte {
 }
 
 func (msg BidCancelMsg) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{msg.Bid.Advertiser}
+	return []sdk.AccAddress{msg.Bid.GetAdvertiserAddress()}
 }
 
 func (msg BidCancelMsg) ValidateBasic() sdk.Error {

@@ -3,20 +3,17 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/tendermint/tendermint/crypto"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-)
-
-const (
-	MAX_EXTRA_VALIDATORS = 1
 )
 
 type CommitmentStartMsg struct {
 	// the Bid is created and signed by the Advertiser
 	Bid Bid `json:"bid"`
 	BidSig []byte `json:"bidSig"`
+	ExtraValidatorPubKey crypto.PubKey `json:"extraValidatorPubKey"`
 	// and accepted (turned into a Commitment) by the publisher
 	Publisher sdk.AccAddress `json:"publisher"`
-	ExtraValidatorAddr sdk.AccAddress `json:"extraValidatorAddr"`
 }
 
 func (msg CommitmentStartMsg) Name() string {

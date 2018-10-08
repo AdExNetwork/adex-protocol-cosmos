@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"golang.org/x/crypto/sha3"
+	"github.com/tendermint/tendermint/crypto"
 	signedmsg "github.com/cosmos/cosmos-sdk/adex/x/adex/signedmsg"
 )
 
@@ -15,7 +16,7 @@ const (
 type BidId [32]byte
 
 type Bid struct {
-	Advertiser sdk.AccAddress `json:"advertiser"`
+	AdvertiserPubKey crypto.PubKey `json:"advertiser"`
 	AdUnit []byte `json:"adUnit"`
 	Goal []byte `json:"byte"`
 	TotalReward sdk.Coins `json:"totalReward"`
@@ -25,7 +26,7 @@ type Bid struct {
 }
 
 func (bid Bid) IsValid() bool {
-	return bid.Timeout > 0 && bid.Timeout < maxTimeout && !bid.Advertiser.Empty()
+	return bid.Timeout > 0 && bid.Timeout < maxTimeout && bid.AdvertiserPubKey != nil
 }
 
 func (bid Bid) Hash() BidId {
@@ -36,7 +37,11 @@ func (bid Bid) Hash() BidId {
 	return sha3.Sum256(b)
 }
 
+func (bid Bid) GetAdvertiserAddress() sdk.AccAddress {
+	return sdk.AccAddress(bid.AdvertiserPubKey.Address())
+}
+
 func (bid Bid) IsValidSignature(sig []byte) bool {
 	bidId := bid.Hash()
-	return signedmsg.IsSigned(bid.Advertiser, bidId[:], sig)
+	return signedmsg.IsSigned(bid.AdvertiserPubKey, bidId[:], sig)
 }
