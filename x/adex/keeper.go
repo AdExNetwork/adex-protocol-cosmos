@@ -51,7 +51,7 @@ func (k Keeper) GetBidState(ctx sdk.Context, bidId types.BidId) uint8 {
 		return types.BidStateActive
 	}
 	if len(val) == 1 {
-		// @TODO: validate if between 2 (BidStateCancelled) and 5 (BidStateSuccess)
+		// @TODO: validate if between 2 (BidStateCanceled) and 5 (BidStateSuccess)
 		return uint8(val[0])
 	}
 	panic("unknown bid state")

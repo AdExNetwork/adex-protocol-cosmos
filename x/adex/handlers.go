@@ -37,7 +37,7 @@ func handleBidCancel(ak Keeper, ctx sdk.Context, msg types.BidCancelMsg) sdk.Res
 		return sdk.ErrUnknownRequest("a commitment for this bid already exists").Result()
 	}
 
-	ak.SetBidState(ctx, bidId, types.BidStateCancelled)
+	ak.SetBidState(ctx, bidId, types.BidStateCanceled)
 
 	return sdk.Result{}
 }
