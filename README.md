@@ -68,4 +68,5 @@ For example:
 * the security of the arithmetic operations with `sdk.Coins`
 * nil pointers/slices and all the `sdk` types that are pointers/slices
 * go-amino: possible serialization/deserialization bugs and inconsistencies
+* sdk.Coins can be negative
 
