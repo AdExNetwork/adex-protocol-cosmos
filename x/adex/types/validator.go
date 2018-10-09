@@ -11,7 +11,7 @@ type Validator struct {
 }
 
 func (v Validator) IsValid() bool {
-	return v.PubKey != nil
+	return v.PubKey != nil && v.Reward != nil && v.Reward.IsNotNegative()
 }
 
 func (v Validator) GetAccAddress() sdk.AccAddress {
