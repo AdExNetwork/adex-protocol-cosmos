@@ -39,6 +39,7 @@ Prior to any of the following messages, bids are unknown to the blockchain. If t
 
 Unlike the Ethereum implementation, the `Timeout` step is not needed here, since it will happen automatically on every block (via `EndBlocker`)
 
+These messages use the types [`Bid`](/x/adex/types/bid.go) and [`Commitment`](/x/adex/types/commitment.go) in their arguments.
 
 ## Rationale, discussion
 
