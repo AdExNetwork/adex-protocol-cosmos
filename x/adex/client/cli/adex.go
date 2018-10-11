@@ -10,6 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	//"github.com/spf13/viper"
+	"log"
 )
 
 // –––––––––––– Flags ––––––––––––––––
@@ -36,6 +37,8 @@ func PostCmdCommitmentStart(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
+			log.Println("fromAddr", publisher)
+
 			//amount := viper.GetInt64(FlagAmount)
 			// @TODO
 			// @TODO: instead of empty slices, nil should be used
@@ -52,11 +55,13 @@ func PostCmdCommitmentStart(cdc *codec.Codec) *cobra.Command {
 			}
 			msg := types.CommitmentStartMsg{
 				Bid: bid,
-				BidSig: nil,
+				BidSig: nil, // needs to be Sign(Bid.Hash())
 				Publisher: publisher,
 				// @TODO: nil extra validator
 				ExtraValidatorPubKey: nil,
 			}
+
+			log.Println("advertiser addr", bid.GetAdvertiserAddress())
 
 			cliCtx.PrintResponse = true
 			return utils.CompleteAndBroadcastTxCli(txBldr, cliCtx, []sdk.Msg{msg})
