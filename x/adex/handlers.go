@@ -5,6 +5,7 @@ import (
 	types "github.com/cosmos/cosmos-sdk/adex/x/adex/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	signedmsg "github.com/cosmos/cosmos-sdk/adex/x/adex/signedmsg"
+	errors "github.com/cosmos/cosmos-sdk/adex/x/adex/errors"
 )
 
 const (
@@ -34,7 +35,7 @@ func handleBidCancel(ak Keeper, ctx sdk.Context, msg types.BidCancelMsg) sdk.Res
 
 	bidId := msg.Bid.Hash()
 	if ak.GetBidState(ctx, bidId) != types.BidStateUnknown {
-		return sdk.ErrUnknownRequest("a commitment for this bid already exists").Result()
+		return errors.ErrUnexpectedBidState(ak.codespace, "a commitment for this bid already exists").Result()
 	}
 
 	ak.SetBidState(ctx, bidId, types.BidStateCanceled)
@@ -47,13 +48,13 @@ func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.
 
 	bidId := msg.Bid.Hash()
 	if ak.GetBidState(ctx, bidId) != types.BidStateUnknown {
-		return sdk.ErrUnknownRequest("a commitment for this bid already exists").Result()
+		return errors.ErrUnexpectedBidState(ak.codespace, "a commitment for this bid already exists").Result()
 	}
 	validUntil := ctx.BlockHeader().Time.Unix() + msg.Bid.Timeout
 	commitment := types.NewCommitmentFromBid(msg.Bid, msg.Publisher, validUntil, msg.ExtraValidatorPubKey)
 	if !commitment.IsValid() {
 		// @TODO: detailed info on why the commitment is not valid
-		return sdk.ErrUnknownRequest("commitment is not valid").Result()
+		return errors.ErrInvalidCommitment(ak.codespace, "IsValid failed").Result()
 	}
 
 	ak.SetBidActiveCommitment(ctx, bidId, commitment)
@@ -71,7 +72,7 @@ func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg typ
 	// check if the state is correct
 	commitmentId := msg.Commitment.Hash()
 	if !ak.IsBidActiveCommitment(ctx, msg.Commitment.BidId, commitmentId) {
-		return sdk.ErrUnknownRequest("there is no active bid with that commitment").Result()
+		return errors.ErrUnexpectedBidState(ak.codespace, "there is no active bid with that commitment").Result()
 	}
 
 	// Check signatures for each validator
@@ -83,7 +84,7 @@ func handleCommitmentFinalize(k bank.Keeper, ak Keeper, ctx sdk.Context, msg typ
 		}
 	}
 	if len(validatorsWhoVoted)*3 < len(msg.Commitment.Validators)*2 {
-		return sdk.ErrUnknownRequest("not enough valid signatures: 2/3 of validators or more required").Result()
+		return errors.ErrNotEnoughSignatures(ak.codespace, "not enough valid signatures: 2/3 of validators or more required").Result()
 	}
 
 	// a vote of 1 zero byte means failure to deliver

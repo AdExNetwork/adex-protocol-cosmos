@@ -14,6 +14,8 @@ const (
 	CodeInvalidCommitment sdk.CodeType = 402
 	CodeInvalidSigCount sdk.CodeType = 403
 	CodeInvalidVote sdk.CodeType = 404
+	CodeUnexpectedBidState sdk.CodeType = 405
+	CodeNotEnoughSignatures sdk.CodeType = 406
 )
 
 func ErrInvalidBid(codespace sdk.CodespaceType, msg string) sdk.Error {
@@ -34,5 +36,13 @@ func ErrInvalidSigCount(codespace sdk.CodespaceType) sdk.Error {
 
 func ErrInvalidVote(codespace sdk.CodespaceType, msg string) sdk.Error {
 	return sdk.NewError(codespace, CodeInvalidVote, fmt.Sprintf("invalid vote: %v", msg))
+}
+
+func ErrUnexpectedBidState(codespace sdk.CodespaceType, msg string) sdk.Error {
+	return sdk.NewError(codespace, CodeUnexpectedBidState, fmt.Sprintf("unexpected bid state: %v", msg))
+}
+
+func ErrNotEnoughSignatures(codespace sdk.CodespaceType, msg string) sdk.Error {
+	return sdk.NewError(codespace, CodeNotEnoughSignatures, msg)
 }
 

@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	errors "github.com/cosmos/cosmos-sdk/adex/x/adex/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -33,7 +34,7 @@ func (msg BidCancelMsg) GetSigners() []sdk.AccAddress {
 func (msg BidCancelMsg) ValidateBasic() sdk.Error {
 	// @TODO: think of skipping validation here, in case we upgraded the app and we want to cancel bids that are no longer valid
 	if !msg.Bid.IsValid() {
-		return sdk.ErrUnknownRequest("invalid bid")
+		return errors.ErrInvalidBid(errors.DefaultCodespace, "IsValid failed")
 	}
 	return nil
 }
