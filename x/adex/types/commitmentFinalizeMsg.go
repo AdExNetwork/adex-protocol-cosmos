@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	errors "github.com/cosmos/cosmos-sdk/adex/x/adex/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -35,14 +36,13 @@ func (msg CommitmentFinalizeMsg) GetSigners() []sdk.AccAddress {
 
 func (msg CommitmentFinalizeMsg) ValidateBasic() sdk.Error {
 	if !msg.Commitment.IsValid() {
-		// @TODO: proper error
-		return sdk.ErrUnknownRequest("invalid commitment")
+		return errors.ErrInvalidCommitment(errors.DefaultCodespace, "IsValid failed")
 	}
 	if len(msg.Commitment.Validators) != len(msg.Signatures) {
-		return sdk.ErrUnknownRequest("invalid number of signatures")
+		return errors.ErrInvalidSigCount(errors.DefaultCodespace)
 	}
 	if len(msg.Vote) == 0 {
-		return sdk.ErrUnknownRequest("empty vote")
+		return errors.ErrInvalidVote(errors.DefaultCodespace, "empty vote")
 	}
 
 	return nil

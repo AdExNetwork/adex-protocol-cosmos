@@ -15,6 +15,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	adex "github.com/cosmos/cosmos-sdk/adex/x/adex"
 	types "github.com/cosmos/cosmos-sdk/adex/x/adex/types"
+	errors "github.com/cosmos/cosmos-sdk/adex/x/adex/errors"
 )
 
 const (
@@ -61,7 +62,7 @@ func NewAdExProtocolApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*ba
 	)
 	app.coinKeeper = bank.NewBaseKeeper(app.accountMapper)
 	app.ibcMapper = ibc.NewMapper(app.cdc, app.keyIBC, app.RegisterCodespace(ibc.DefaultCodespace))
-	app.adexKeeper = adex.NewKeeper(app.keyAdEx, app.cdc)
+	app.adexKeeper = adex.NewKeeper(app.keyAdEx, app.cdc, app.RegisterCodespace(errors.DefaultCodespace))
 
 	// register message routes: all messages starting with adex/ will be routed to the adex handler
 	app.Router().

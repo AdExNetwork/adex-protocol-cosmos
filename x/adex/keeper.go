@@ -16,10 +16,11 @@ const (
 type Keeper struct {
         storeKey  sdk.StoreKey
 	cdc       *codec.Codec
+	codespace sdk.CodespaceType
 }
 
-func NewKeeper(key sdk.StoreKey, cdc *codec.Codec) Keeper {
-	return Keeper{ storeKey: key, cdc: cdc }
+func NewKeeper(key sdk.StoreKey, cdc *codec.Codec, codespace sdk.CodespaceType) Keeper {
+	return Keeper{ storeKey: key, cdc: cdc, codespace: codespace }
 }
 
 func (k Keeper) SetBidState(ctx sdk.Context, bidId types.BidId, state uint8) {

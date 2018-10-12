@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/tendermint/tendermint/crypto"
+	errors "github.com/cosmos/cosmos-sdk/adex/x/adex/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -39,10 +40,10 @@ func (msg CommitmentStartMsg) GetSigners() []sdk.AccAddress {
 
 func (msg CommitmentStartMsg) ValidateBasic() sdk.Error {
 	if !msg.Bid.IsValid() {
-		return sdk.ErrUnknownRequest("invalid bid")
+		return errors.ErrInvalidBid(errors.DefaultCodespace, "IsValid failed")
 	}
 	if !msg.Bid.IsValidSignature(msg.BidSig) {
-		return sdk.ErrUnauthorized("bid signature not valid")
+		return errors.ErrInvalidBidSignature(errors.DefaultCodespace)
 	}
 	return nil
 }
