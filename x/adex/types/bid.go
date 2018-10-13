@@ -6,6 +6,7 @@ import (
 	"golang.org/x/crypto/sha3"
 	"github.com/tendermint/tendermint/crypto"
 	signedmsg "github.com/cosmos/cosmos-sdk/adex/x/adex/signedmsg"
+	"errors"
 )
 
 const (
@@ -25,8 +26,14 @@ type Bid struct {
 	Validators []Validator `json:"validators"`
 }
 
-func (bid Bid) IsValid() bool {
-	return bid.Timeout > 0 && bid.Timeout < maxTimeout && bid.AdvertiserPubKey != nil
+func (bid Bid) Validate() error {
+	if !(bid.Timeout > 0 && bid.Timeout < maxTimeout) {
+		return errors.New("invalid bid timeout")
+	}
+	if bid.AdvertiserPubKey == nil {
+		return errors.New("AdvertiserPubKey required")
+	}
+	return nil
 }
 
 func (bid Bid) Hash() BidId {

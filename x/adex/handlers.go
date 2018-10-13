@@ -52,9 +52,9 @@ func handleCommitmentStart(k bank.Keeper, ak Keeper, ctx sdk.Context, msg types.
 	}
 	validUntil := ctx.BlockHeader().Time.Unix() + msg.Bid.Timeout
 	commitment := types.NewCommitmentFromBid(msg.Bid, msg.Publisher, validUntil, msg.ExtraValidatorPubKey)
-	if !commitment.IsValid() {
-		// @TODO: detailed info on why the commitment is not valid
-		return errors.ErrInvalidCommitment(ak.codespace, "IsValid failed").Result()
+	errCommitment := commitment.Validate()
+	if errCommitment != nil {
+		return errors.ErrInvalidCommitment(ak.codespace, errCommitment).Result()
 	}
 
 	ak.SetBidActiveCommitment(ctx, bidId, commitment)

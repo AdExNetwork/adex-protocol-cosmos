@@ -5,6 +5,7 @@ import (
 	"golang.org/x/crypto/sha3"
 	"github.com/tendermint/tendermint/crypto"
 	"encoding/json"
+	"errors"
 )
 
 const (
@@ -23,26 +24,26 @@ type Commitment struct {
 }
 
 // @TODO; tests
-func (commitment Commitment) IsValid() bool {
+func (commitment Commitment) Validate() error {
 	// @TODO: figure out if we need the nil ref/slice checks; it all depends on what happens when deserializing
-	if commitment.Validators == nil || commitment.TotalReward == nil {
-		return false
+	if commitment.Validators == nil || commitment.TotalReward == nil || commitment.Advertiser == nil || commitment.Publisher == nil {
+		return errors.New("unexpected nil value")
 	}
 	if len(commitment.Validators) < minValidatorCount {
-		return false
+		return errors.New("insufficient number of validators")
 	}
 	for _, validator := range commitment.Validators {
 		if !validator.IsValid() {
-			return false
+			return errors.New("invalid validator")
 		}
 	}
 
 	if commitment.ValidUntil <= 0 {
-		return false
+		return errors.New("commitment validUntil must be positive")
 	}
 
 	if !commitment.TotalReward.IsNotNegative() {
-		return false
+		return errors.New("commitment TotalReward must be positive")
 	}
 
 	validatorRewards := sdk.Coins{}
@@ -50,10 +51,10 @@ func (commitment Commitment) IsValid() bool {
 		validatorRewards = validatorRewards.Plus(validator.Reward)
 	}
 	if commitment.TotalReward.IsLT(validatorRewards) {
-		return false
+		return errors.New("TotalReward must be more than validatorRewards")
 	}
 
-	return true
+	return nil
 }
 
 func (commitment Commitment) Hash() CommitmentId {

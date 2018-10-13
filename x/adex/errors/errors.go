@@ -18,16 +18,16 @@ const (
 	CodeNotEnoughSignatures sdk.CodeType = 406
 )
 
-func ErrInvalidBid(codespace sdk.CodespaceType, msg string) sdk.Error {
-	return sdk.NewError(codespace, CodeInvalidBid, fmt.Sprintf("invalid bid: %v", msg))
+func ErrInvalidBid(codespace sdk.CodespaceType, err error) sdk.Error {
+	return sdk.NewError(codespace, CodeInvalidBid, fmt.Sprintf("invalid bid: %v", err))
 }
 
 func ErrInvalidBidSignature(codespace sdk.CodespaceType) sdk.Error {
 	return sdk.NewError(codespace, CodeInvalidBidSignature, "invalid bid signature")
 }
 
-func ErrInvalidCommitment(codespace sdk.CodespaceType, msg string) sdk.Error {
-	return sdk.NewError(codespace, CodeInvalidCommitment, fmt.Sprintf("invalid commitment: %v", msg))
+func ErrInvalidCommitment(codespace sdk.CodespaceType, err error) sdk.Error {
+	return sdk.NewError(codespace, CodeInvalidCommitment, fmt.Sprintf("invalid commitment: %v", err))
 }
 
 func ErrInvalidSigCount(codespace sdk.CodespaceType) sdk.Error {

@@ -35,8 +35,9 @@ func (msg CommitmentFinalizeMsg) GetSigners() []sdk.AccAddress {
 }
 
 func (msg CommitmentFinalizeMsg) ValidateBasic() sdk.Error {
-	if !msg.Commitment.IsValid() {
-		return errors.ErrInvalidCommitment(errors.DefaultCodespace, "IsValid failed")
+	errCommitment := msg.Commitment.Validate()
+	if errCommitment != nil {
+		return errors.ErrInvalidCommitment(errors.DefaultCodespace, errCommitment)
 	}
 	if len(msg.Commitment.Validators) != len(msg.Signatures) {
 		return errors.ErrInvalidSigCount(errors.DefaultCodespace)
