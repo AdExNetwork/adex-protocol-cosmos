@@ -25,6 +25,11 @@ cd adex-protocol-cosmos
 make
 ```
 
+### Run
+
+`./build/adexd start` - start the AdEx daemon
+
+`./build/adexcli` - CLI to send commands to the daemon
 
 ## Message types
 
