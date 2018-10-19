@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	types "github.com/cosmos/cosmos-sdk/adex/x/adex/types"
+	types "github.com/cosmos/cosmos-sdk/adex-protocol-cosmos/x/adex/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	authtxb "github.com/cosmos/cosmos-sdk/x/auth/client/txbuilder"

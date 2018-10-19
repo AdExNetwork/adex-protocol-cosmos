@@ -19,8 +19,9 @@ make get_tools && make get_vendor_deps && make install
 ### Get this repo, build adexd/adexcli:
 
 ```
-git clone https://github.com/AdExNetwork/adex-protocol-cosmos adex
-cd adex
+cd $GOPATH/src/github.com/cosmos/cosmos-sdk
+git clone https://github.com/AdExNetwork/adex-protocol-cosmos
+cd adex-protocol-cosmos
 make
 ```
 

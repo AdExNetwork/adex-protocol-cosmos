@@ -5,7 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"golang.org/x/crypto/sha3"
 	"github.com/tendermint/tendermint/crypto"
-	signedmsg "github.com/cosmos/cosmos-sdk/adex/x/adex/signedmsg"
+	signedmsg "github.com/cosmos/cosmos-sdk/adex-protocol-cosmos/x/adex/signedmsg"
 	"errors"
 )
 

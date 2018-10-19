@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/tendermint/tendermint/crypto"
-	errors "github.com/cosmos/cosmos-sdk/adex/x/adex/errors"
+	errors "github.com/cosmos/cosmos-sdk/adex-protocol-cosmos/x/adex/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

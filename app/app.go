@@ -13,9 +13,9 @@ import (
 	dbm "github.com/tendermint/tendermint/libs/db"
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
-	adex "github.com/cosmos/cosmos-sdk/adex/x/adex"
-	types "github.com/cosmos/cosmos-sdk/adex/x/adex/types"
-	errors "github.com/cosmos/cosmos-sdk/adex/x/adex/errors"
+	adex "github.com/cosmos/cosmos-sdk/adex-protocol-cosmos/x/adex"
+	types "github.com/cosmos/cosmos-sdk/adex-protocol-cosmos/x/adex/types"
+	errors "github.com/cosmos/cosmos-sdk/adex-protocol-cosmos/x/adex/errors"
 )
 
 const (

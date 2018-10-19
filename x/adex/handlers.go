@@ -2,10 +2,10 @@ package adex
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	types "github.com/cosmos/cosmos-sdk/adex/x/adex/types"
+	types "github.com/cosmos/cosmos-sdk/adex-protocol-cosmos/x/adex/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	signedmsg "github.com/cosmos/cosmos-sdk/adex/x/adex/signedmsg"
-	errors "github.com/cosmos/cosmos-sdk/adex/x/adex/errors"
+	signedmsg "github.com/cosmos/cosmos-sdk/adex-protocol-cosmos/x/adex/signedmsg"
+	errors "github.com/cosmos/cosmos-sdk/adex-protocol-cosmos/x/adex/errors"
 )
 
 const (
